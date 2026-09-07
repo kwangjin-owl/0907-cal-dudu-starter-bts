@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>손지은 · 확정대기 Service Blueprint As-Is → To-Be</title>
+<title>Service Blueprint As-Is → To-Be · 페르소나 둘</title>
 <style>
   :root{
     --paper:#EDF0F3; --card:#FFFFFF; --ink:#14263B; --soft:#4A5C70;
@@ -139,13 +139,48 @@
   footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--soft)}
   footer b{color:var(--ink)}
   @media print{ body{background:#fff} .wrap{padding:0} .bpscroll{overflow:visible} .bp{min-width:0} }
+
+  /* 페르소나 전환 */
+  .pswitch{display:flex;gap:6px;margin:26px 0 0;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+  .pswitch label{font-size:14.5px;font-weight:700;color:var(--soft);background:#E2E7EC;
+    border:2px solid var(--rule);border-bottom:none;padding:10px 20px 11px;cursor:pointer;
+    margin-bottom:-2px;line-height:1.25;user-select:none}
+  .pswitch label small{display:block;font-size:11px;font-weight:600;color:var(--soft);margin-top:3px}
+  .pswitch label:hover{background:#D9E0E6;color:var(--ink)}
+  #p-son,#p-lee{position:absolute;opacity:0;width:0;height:0}
+  #p-son:focus-visible ~ .pswitch label[for="p-son"],
+  #p-lee:focus-visible ~ .pswitch label[for="p-lee"]{outline:2px solid var(--accent);outline-offset:2px}
+  #p-son:checked ~ .pswitch label[for="p-son"],
+  #p-lee:checked ~ .pswitch label[for="p-lee"]{color:var(--ink);background:var(--paper);
+    border-color:var(--ink);border-bottom:2px solid var(--paper)}
+  #p-son:checked ~ .pswitch label[for="p-son"] small,
+  #p-lee:checked ~ .pswitch label[for="p-lee"] small{color:var(--accent)}
+  h2.ptitle{font-size:clamp(23px,3.2vw,32px);font-weight:800;letter-spacing:-.03em;
+    line-height:1.15;margin:22px 0 14px;padding:0;border:none}
+  .pane{display:none;padding-top:8px}
+  #p-son:checked ~ .pane-son{display:block}
+  #p-lee:checked ~ .pane-lee{display:block}
+  @media print{ .pswitch{display:none} .pane{display:block !important} }
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <p class="kicker">M2 Project Day1 · 2026-09-07</p>
-  <h1>손지은이 두 번째로 기다리는 동안</h1>
+  <h1>Service Blueprint · As-Is와 To-Be</h1>
+  <p class="lede">같은 예약 서비스를 두 사람의 눈으로 봤습니다.
+  타겟으로 고른 구간이 서로 다르고, 그래서 해결책도 다릅니다.
+  아래 탭으로 바꿔 보세요.</p>
+
+  <input type="radio" name="persona" id="p-son" checked />
+  <input type="radio" name="persona" id="p-lee" />
+
+  <div class="pswitch">
+    <label for="p-son">손지은<small>확정대기 · 언제 되는지 모른다</small></label>
+    <label for="p-lee">이완식<small>상담신청 · 물어볼 곳이 없다</small></label>
+  </div>
+
+  <div class="pane pane-son">
+  <h2 class="ptitle">손지은이 두 번째로 기다리는 동안</h2>
   <p class="lede">User Journey Map에서 2점이 나온 세 곳 중 <b>Step 6 확정대기</b>를 골랐습니다.
   그 구간만 자세히 들여다보고, 고칠 자리를 표시한 뒤, 어떻게 바꿀지 그렸습니다.</p>
 
@@ -487,9 +522,308 @@
       <td>DB를 새로 고쳐야 해서 오늘은 안 합니다</td></tr>
   </table>
   </div>
+  </div>
+
+  <div class="pane pane-lee">
+
+  <h2 class="ptitle">물어볼 곳을 못 찾은 채 신청한다</h2>
+  <p class="lede">User Journey Map에서 2점이 나온 네 곳 중 <b>Step 1 상담신청</b>을 골랐습니다.
+  그 구간만 자세히 들여다보고, 고칠 자리를 표시한 뒤, 어떻게 바꿀지 그렸습니다.</p>
+
+  <div class="target">
+    <p>타겟 PAINPOINT</p>
+    <h2>지원금 사용 가능 여부를 물을 곳이 없다</h2>
+    <p>이완식은 상담 비용을 지원금으로 처리할 수 있는지 <b>먼저 알고 싶었습니다.</b>
+    그게 안 되면 이 상담을 받을지 말지가 달라지니까요.
+    그런데 앱에는 물을 곳도, 답할 수 없다는 말도 없었습니다.
+    결국 확인 못 한 채로 신청했고, 그 질문은 확정대기까지 그대로 따라옵니다.</p>
+  </div>
+
+  <div class="who">
+    <div><b>누가</b><span><em>이완식</em> · 42세 · 서울 마포구<br>교육 서비스업 영업 관리자</span></div>
+    <div><b>무엇을 원하나</b><span>교육 컨설팅 센터 창업을 위한<br><em>정부지원 사업 신청서 제출</em></span></div>
+    <div><b>왜 먼저 묻고 싶나</b><span>지원금으로 안 되면<br><em>상담 자체를 다시 생각</em>해야 함</span></div>
+    <div><b>남은 시간</b><span>신청서 제출 마감이 <em>9/8</em><br>상담 후 수정할 시간이 하루뿐</span></div>
+  </div>
+
+  <div class="note">
+    <b>먼저 짚고 갑니다.</b>
+    상담이 곧 물어보는 자리인데 왜 따로 물을 곳이 필요하냐고 할 수 있습니다.
+    이완식이 알고 싶은 건 <b>상담을 받을지 정하기 전에</b> 필요한 정보입니다.
+    그리고 지원금을 실제로 쓸 수 있는지는 <b>사업 주관기관이 정하는 것</b>이라
+    상담사도 대신 답해 줄 수 없습니다.
+  </div>
+
+  <h2 class="sec first">As-Is · 고칠 칸을 표시했습니다</h2>
+  <p class="sub">왼쪽에서 오른쪽으로 시간이 흐릅니다. <b>칸이 넓을수록 오래 걸리는 단계</b>입니다.
+  빗금 친 빨간 칸이 고쳐야 할 자리입니다.
+  <b>첫 칸에서 생긴 질문이 마지막까지 그대로 남습니다.</b></p>
+
+  <div class="legend">
+    <div class="lg"><span style="background:var(--ev);box-shadow:inset 0 0 0 1px var(--evb)"></span><b>이완식 쪽</b></div>
+    <div class="lg"><span style="background:var(--fs);box-shadow:inset 0 0 0 1px var(--fsb)"></span><b>돌아오는 응답</b></div>
+    <div class="lg"><span style="background:var(--bs);box-shadow:inset 0 0 0 1px var(--bsb)"></span><b>어드민의 일</b></div>
+    <div class="lg"><span style="background:var(--sp);box-shadow:inset 0 0 0 1px var(--spb)"></span><b>시스템</b></div>
+    <div class="lg"><span style="background:repeating-linear-gradient(135deg,#FBF1EF 0 5px,#F6E6E2 5px 10px);box-shadow:inset 0 0 0 2px var(--warn)"></span><b>고칠 칸</b></div>
+  </div>
+
+  <div class="bpscroll">
+  <div class="bp">
+    <div class="stage"></div>
+    <div class="stage hot"><b>안내 찾기</b><small>8/31 저녁 · 몇 분</small></div>
+    <div class="stage hot"><b>못 찾은 채 신청</b><small>8/31 저녁</small></div>
+    <div class="stage"><b>마감 확인</b><small>9/1 오후</small></div>
+    <div class="stage"><b>9/7로 재신청</b><small>9/1 저녁</small></div>
+    <div class="stage hot"><b>확정 대기</b><small>9/1 ~ 9/7 · 며칠</small></div>
+    <div class="stage"><b>9/8 제출</b><small>마감</small></div>
+
+    <div class="lab"><span>감정<em>5 좋음 · 1 나쁨</em></span></div>
+    <div class="moodrow">
+      <div class="moodscale">
+        <span style="top:12%">5</span><span style="top:50%">3</span><span style="top:88%">1</span>
+      </div>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="0" y1="50" x2="100" y2="50" stroke="#E1E6EB" stroke-width="1" vector-effect="non-scaling-stroke"/>
+        <polyline points="11.4,75 30,75 43.6,75 56.4,50 75.7,75" fill="none" stroke="#B4472E"
+                  stroke-width="2" vector-effect="non-scaling-stroke"/>
+        <polyline points="75.7,75 94.3,75" fill="none" stroke="#B4472E" stroke-width="2"
+                  stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div class="mk bad" style="left:11.4%;top:75%"><b>&#128543;</b><i>2</i></div>
+      <div class="mk bad" style="left:30%;top:75%"><b>&#128543;</b><i>2</i></div>
+      <div class="mk bad" style="left:43.6%;top:75%"><b>&#128543;</b><i>2</i></div>
+      <div class="mk" style="left:56.4%;top:50%"><b>&#128528;</b><i>3</i></div>
+      <div class="mk bad" style="left:75.7%;top:75%"><b>&#128543;</b><i>2</i></div>
+      <div class="mk unk" style="left:94.3%;top:75%"><b>?</b></div>
+    </div>
+
+    <div class="lab"><span>화면에 보이는 것<em>완식이 보는 것</em></span></div>
+    <div class="cell hole"><u>&#9312;</u>안내가 아무것도 없음<br><i>FAQ도, 답할 수 없다는 말도 없이 슬롯 표만 있음</i></div>
+    <div class="cell ev">42슬롯 표<br>고른 목록 (2/3)</div>
+    <div class="cell ev">마감된 슬롯이 회색으로<br>재선택 안내</div>
+    <div class="cell ev">접수됨 · 신청 #2 (v2)</div>
+    <div class="cell hole"><u>&#9315;</u>확정됨만 크게 보임<br><i>지원금 건은 아직 아무것도 안 풀렸는데 다 된 것처럼 보임</i></div>
+    <div class="cell ev">신청서 제출<br><i>지원금 처리 여부는 여전히 모름</i></div>
+
+    <div class="lab"><span>이완식이 하는 행동<em>직접 하는 것</em></span></div>
+    <div class="cell hole"><u>&#9312;</u>앱을 뒤져 안내를 찾음<br><i>못 찾고 포기. 여기서 답이 없다는 것조차 확인이 안 됨</i></div>
+    <div class="cell hole"><u>&#9313;</u>확인 못 한 채 신청<br><i>지원금이 안 되면 상담을 받을지부터 달라지는데 그대로 진행</i></div>
+    <div class="cell ev">둘 다 마감된 것 확인<br>제출 전 다른 날 찾기</div>
+    <div class="cell ev">9/7 오후로 재신청<br>초안부터 쓰기 시작</div>
+    <div class="cell hole"><u>&#9315;</u>앱 밖에서 따로 알아봄<br><i>주관기관에 전화하거나 공고문을 다시 뒤짐</i></div>
+    <div class="cell ev">신청서 제출</div>
+
+    <div class="line"><b>상호작용선</b><i></i><b>완식이 누르는 것 / 서비스가 답하는 것</b></div>
+
+    <div class="lab"><span>돌아오는 응답<em>서비스의 반응</em></span></div>
+    <div class="cell hole"><u>&#9312;</u>없음<br><i>답을 주지도, 못 준다고 말하지도 않음</i></div>
+    <div class="cell fs">접수 완료</div>
+    <div class="cell fs">마감 표시와 재선택 안내</div>
+    <div class="cell fs">재선택 접수 완료</div>
+    <div class="cell fs">확정 결과</div>
+    <div class="cell none"></div>
+
+    <div class="line"><b>가시선</b><i></i><b>완식이 아는 것 / 모르는 것</b></div>
+
+    <div class="lab"><span>어드민의 일<em>완식은 모름</em></span></div>
+    <div class="cell hole"><u>&#9314;</u>무엇을 궁금해하는지 모름<br><i>상담 시간의 앞부분이 배경 설명에 쓰임</i></div>
+    <div class="cell none"></div>
+    <div class="cell none"></div>
+    <div class="cell none"></div>
+    <div class="cell bs">신청 목록 열기<br>후보 중 하나 확정</div>
+    <div class="cell none"></div>
+
+    <div class="line thin"><b>내부 상호작용선</b><i></i><b>사람이 판단하는 일 / DB가 처리하는 일</b></div>
+
+    <div class="lab"><span>시스템이 하는 일<em>DB와 함수</em></span></div>
+    <div class="cell sp">slots 조회<br><i>안내 문구는 화면에만 있으면 됨</i></div>
+    <div class="cell sp">submit_request<br>신청과 희망 저장</div>
+    <div class="cell sp">slots 조회<br>마감 상태 반영</div>
+    <div class="cell sp">resubmit_request<br>v2로 새 접수</div>
+    <div class="cell sp">confirm_request<br>슬롯 마감 · 상태 변경</div>
+    <div class="cell none"></div>
+  </div>
+  </div>
+  <p class="hint"><b>첫 칸과 다섯째 칸이 같은 문제입니다.</b>
+  8/31에 생긴 질문이 9/7까지 그대로 남아 있고, 그 사이 어느 칸도 그 질문을 받아주지 않습니다.
+  <b>예약은 잘 돌아가는데 질문만 갈 곳이 없습니다.</b></p>
+
+  <div class="branch">
+    <p class="bt">손지은과 무엇이 다른가</p>
+    <div class="brow">
+      <div class="bcard"><b>손지은 · 확정대기</b>
+        <span>언제 확정되는지 몰라서 앱을 반복해서 열어봅니다. 시간이 지나면 어떻게든 결론이 납니다.</span></div>
+      <div class="bcard bad"><b>이완식 · 상담신청</b>
+        <span>물어볼 곳이 없어서 답을 못 받습니다. 시간이 지나도 저절로 풀리지 않고,
+        예약이 확정돼도 질문은 그대로 남습니다.</span></div>
+      <div class="bcard"><b>그래서 해결책도 다릅니다</b>
+        <span>손지은에게는 기다리는 동안 알려주는 것이 답이었습니다.
+        이완식에게는 <b>답할 수 없다는 것과 어디에 물어야 하는지를 알려주는 것</b>이 답입니다.</span></div>
+    </div>
+    <p class="bn"><b>이완식의 2점은 네 곳입니다.</b>
+    상담신청, 마감확인, 일정재확인, 확정대기.
+    이 중 마감확인과 일정재확인은 후보를 다시 고르면 풀리는 문제입니다.
+    <b>상담신청의 질문만 끝까지 안 풀립니다.</b> 그래서 여기를 골랐습니다.</p>
+  </div>
+
+  <h3 class="sub2">왜 이 구간을 골랐는가</h3>
+  <div class="tablewrap">
+  <table>
+    <tr><th class="nw">근거</th><th>내용</th></tr>
+    <tr><td class="nw">순서가 뒤집힘</td><td class="fixed">지원금으로 처리되는지 알아야 상담을 받을지 정할 수 있습니다. 그런데 확인할 방법이 없어서 순서가 뒤집힌 채로 신청했습니다.</td></tr>
+    <tr><td class="nw">페르소나</td><td>상대가 원하는 것을 짚어내고 복잡한 내용을 쉬운 말로 바꿔 설명하는 일을 합니다. 행동 주도성도 4/5입니다. 먼저 묻는 사람인데 물을 곳이 없습니다.</td></tr>
+    <tr><td class="nw">끝까지 안 풀림</td><td class="fixed">다른 2점들은 후보를 다시 고르면 풀립니다. 이 질문은 예약이 확정돼도 그대로 남습니다. 저니맵에서 유일하게 반복되는 불편입니다.</td></tr>
+    <tr><td class="nw">마감이 붙어 있음</td><td>9/8이 신청서 제출 마감입니다. 지원금 처리 여부를 모른 채 제출하면 나중에 되돌리기 어렵습니다.</td></tr>
+    <tr><td class="nw">어드민도 손해</td><td class="fixed">완식이 뭘 궁금해하는지 모른 채 상담이 시작됩니다. 상담 시간의 앞부분이 배경 설명에 쓰입니다.</td></tr>
+  </table>
+  </div>
+
+  <h2 class="sec">To-Be · 답할 수 있는 것과 없는 것을 나눕니다</h2>
+  <p class="sub">초록 칸이 새로 넣은 것입니다. 번호는 위에서 표시한 칸과 같습니다.
+  <b>답을 대신 정해주는 게 아니라, 여기서 답할 수 없다는 것과 어디에 물어야 하는지를 알려줍니다.</b></p>
+
+  <div class="legend">
+    <div class="lg"><span style="background:var(--new);box-shadow:inset 0 0 0 2px var(--newb)"></span><b>새로 넣은 것</b></div>
+    <div class="lg"><span style="background:var(--ev);opacity:.6;box-shadow:inset 0 0 0 1px var(--evb)"></span><b>그대로인 칸</b></div>
+  </div>
+
+  <div class="bpscroll">
+  <div class="bp">
+    <div class="stage"></div>
+    <div class="stage fix"><b>안내 찾기</b><small>&#8594; 바로 보임</small></div>
+    <div class="stage fix"><b>알고 신청</b><small>8/31 저녁</small></div>
+    <div class="stage"><b>마감 확인</b><small>9/1 오후</small></div>
+    <div class="stage"><b>9/7로 재신청</b><small>9/1 저녁</small></div>
+    <div class="stage fix"><b>확정 대기</b><small>&#8594; 구분해서 안내</small></div>
+    <div class="stage"><b>9/8 제출</b><small>마감</small></div>
+
+    <div class="lab"><span>감정<em>예상</em></span></div>
+    <div class="moodrow">
+      <div class="moodscale">
+        <span style="top:12%">5</span><span style="top:50%">3</span><span style="top:88%">1</span>
+      </div>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="0" y1="50" x2="100" y2="50" stroke="#E1E6EB" stroke-width="1" vector-effect="non-scaling-stroke"/>
+        <polyline points="11.4,75 30,75 43.6,75 56.4,50 75.7,75 94.3,75" fill="none"
+                  stroke="#C9D3DC" stroke-width="2" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+        <polyline points="11.4,50 30,50 43.6,50 56.4,50 75.7,50 94.3,25" fill="none"
+                  stroke="#2F7A6C" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div class="mk good" style="left:11.4%;top:50%"><b>&#128528;</b><i>3</i></div>
+      <div class="mk good" style="left:30%;top:50%"><b>&#128528;</b><i>3</i></div>
+      <div class="mk good" style="left:43.6%;top:50%"><b>&#128528;</b><i>3</i></div>
+      <div class="mk" style="left:56.4%;top:50%"><b>&#128528;</b><i>3</i></div>
+      <div class="mk good" style="left:75.7%;top:50%"><b>&#128528;</b><i>3</i></div>
+      <div class="mk good" style="left:94.3%;top:25%"><b>&#128578;</b><i>4</i></div>
+    </div>
+
+    <div class="lab"><span>화면에 보이는 것<em>완식이 보는 것</em></span></div>
+    <div class="cell new"><u>&#9312;</u>신청 화면에 FAQ<br><i>여기서 답할 수 있는 것과 없는 것을 나눠서 적음</i><br><u>&#9313;</u>어디에 확인해야 하는지<br><i>지원금 집행 여부는 사업 주관기관</i></div>
+    <div class="cell new"><u>&#9314;</u>이 상담에서 다루는 범위<br><i>무엇을 물어볼 수 있는지 미리 보임</i></div>
+    <div class="cell ev keep">마감된 슬롯이 회색으로<br>재선택 안내</div>
+    <div class="cell ev keep">접수됨 · 신청 #2 (v2)</div>
+    <div class="cell new"><u>&#9315;</u>확정됨 + 구분 문구<br><i>예약이 확정된 것이지 지원금 사용이 확인된 것은 아닙니다</i></div>
+    <div class="cell ev keep">신청서 제출</div>
+
+    <div class="lab"><span>이완식이 하는 행동<em>직접 하는 것</em></span></div>
+    <div class="cell new"><u>&#9313;</u>여기서는 답이 없다는 걸<br>바로 알고 주관기관으로 감<br><i>앱을 뒤지다 포기할 일이 없어짐</i></div>
+    <div class="cell new"><u>&#9314;</u>상담에서 물을 것을 정리<br><i>범위를 알고 신청</i></div>
+    <div class="cell ev keep">둘 다 마감된 것 확인<br>제출 전 다른 날 찾기</div>
+    <div class="cell ev keep">9/7 오후로 재신청<br>초안부터 쓰기 시작</div>
+    <div class="cell new"><u>&#9315;</u>두 가지를 따로 챙김<br><i>예약은 앱에서, 지원금은 주관기관에서</i></div>
+    <div class="cell ev keep">신청서 제출</div>
+
+    <div class="line"><b>상호작용선</b><i></i><b>완식이 누르는 것 / 서비스가 답하는 것</b></div>
+
+    <div class="lab"><span>돌아오는 응답<em>서비스의 반응</em></span></div>
+    <div class="cell new"><u>&#9312;</u><u>&#9313;</u>답할 수 없다는 안내와<br>확인해야 할 곳<br><i>가능하다고 단정하지 않음</i></div>
+    <div class="cell new"><u>&#9314;</u>상담 범위 안내</div>
+    <div class="cell fs keep">마감 표시와 재선택 안내</div>
+    <div class="cell fs keep">재선택 접수 완료</div>
+    <div class="cell new"><u>&#9315;</u>확정 결과 + 남은 확인 사항</div>
+    <div class="cell none"></div>
+
+    <div class="line"><b>가시선</b><i></i><b>완식이 아는 것 / 모르는 것</b></div>
+
+    <div class="lab"><span>어드민의 일<em>완식은 모름</em></span></div>
+    <div class="cell new"><u>&#9314;</u>상담 범위를 미리 적어 둠<br><i>매번 설명하지 않아도 됨</i></div>
+    <div class="cell none"></div>
+    <div class="cell none"></div>
+    <div class="cell none"></div>
+    <div class="cell bs keep">신청 목록 열기<br>후보 중 하나 확정</div>
+    <div class="cell none"></div>
+
+    <div class="line thin"><b>내부 상호작용선</b><i></i><b>사람이 판단하는 일 / DB가 처리하는 일</b></div>
+
+    <div class="lab"><span>시스템이 하는 일<em>DB와 함수</em></span></div>
+    <div class="cell sp keep">slots 조회<br><i>안내 문구는 화면에만 있으면 됨</i></div>
+    <div class="cell sp keep">submit_request<br>신청과 희망 저장</div>
+    <div class="cell sp keep">slots 조회<br>마감 상태 반영</div>
+    <div class="cell sp keep">resubmit_request<br>v2로 새 접수</div>
+    <div class="cell sp keep">confirm_request<br>슬롯 마감 · 상태 변경</div>
+    <div class="cell none"></div>
+  </div>
+  </div>
+  <p class="hint"><b>DB는 한 줄도 안 바뀝니다.</b>
+  새로 넣은 것이 전부 화면에 적는 안내 문구라서, 저장할 것도 규칙을 고칠 것도 없습니다.
+  <b>답을 만들어 주는 게 아니라 헤매지 않게 하는 것</b>이 이 개선의 전부입니다.</p>
+
+  <h3 class="sub2">왜 이렇게 바꿨는가</h3>
+  <div class="tablewrap">
+  <table>
+    <tr><th class="nw">번호</th><th class="nw">바꾼 것</th><th>이유</th><th class="nw">근거</th></tr>
+    <tr><td class="nw">&#9312;</td><td class="nw">신청 화면 FAQ<br>답할 수 있는 것 / 없는 것</td>
+      <td class="gr">지금은 아무 말이 없어서 앱을 뒤지다 포기했습니다. 못 한다고 말해주기만 해도 헛수고가 사라집니다. 가능하다고 단정해서 안내하면 나중에 더 큰 문제가 됩니다.</td>
+      <td class="nw">저니맵<br>Step 1</td></tr>
+    <tr><td class="nw">&#9313;</td><td class="nw">어디에 확인해야<br>하는지 안내</td>
+      <td class="gr">지원금을 실제로 쓸 수 있는지는 사업 공고와 주관기관이 정합니다. 상담사도 대신 답할 수 없습니다. 어디로 가야 하는지만 알려줘도 하루를 벌 수 있습니다.</td>
+      <td class="nw">상황 설명<br>규정 미제공</td></tr>
+    <tr><td class="nw">&#9314;</td><td class="nw">이 상담에서<br>다루는 범위</td>
+      <td class="gr">무엇을 물어볼 수 있는지 알면 상담을 받을지 스스로 정할 수 있습니다. 어드민도 매번 배경을 설명하지 않아도 됩니다.</td>
+      <td class="nw">저니맵<br>어드민 칸</td></tr>
+    <tr><td class="nw">&#9315;</td><td class="nw">확정 안내에<br>구분 문구</td>
+      <td class="gr">예약이 확정되면 다 된 것처럼 보입니다. 지원금 건은 아직 하나도 안 풀렸는데요. 두 가지가 다른 일이라는 걸 그 자리에서 말해줘야 합니다.</td>
+      <td class="nw">저니맵<br>확정대기</td></tr>
+  </table>
+  </div>
+
+  <div class="okbox">
+    <b>예약 규칙도, DB도 그대로입니다.</b>
+    슬롯 수도, 고를 수 있는 개수도, 관리자가 직접 확정한다는 것도 바뀌지 않습니다.
+    새로 넣은 것은 전부 <b>화면에 적는 안내 문구</b>입니다.
+  </div>
+
+  <div class="note">
+    <b>답을 대신 정해주지는 않습니다.</b>
+    지원금을 실제로 쓸 수 있는지는 사업 공고와 주관기관이 정합니다.
+    이 앱은 <b>답할 수 없다는 것과 어디에 확인해야 하는지를 알려주는 데까지만</b> 합니다.
+    가능하다고 단정해서 안내하면 나중에 더 큰 문제가 됩니다.
+  </div>
+
+  <h2 class="sec">오늘 어디까지 할 수 있나</h2>
+  <p class="sub">Ease는 <b>오늘 안에 끝낼 수 있는가</b> 기준입니다.
+  네 가지 모두 화면 문구라 <b>손지은 개선보다 오히려 손이 덜 갑니다.</b></p>
+  <div class="tablewrap">
+  <table>
+    <tr><th class="nw">구분</th><th class="nw">항목</th><th class="nw">Impact</th><th class="nw">Ease</th><th>왜 이 순서인가</th></tr>
+    <tr><td class="nw">Must</td><td class="nw">&#9312;&#9313; FAQ와<br>확인 주체 안내</td><td class="nw">상</td><td class="nw">상</td>
+      <td class="gr">타겟을 정면으로 칩니다. 신청 화면에 문구만 넣으면 되고 저장할 것도 없습니다</td></tr>
+    <tr><td class="nw">Must</td><td class="nw">&#9315; 확정 안내<br>구분 문구</td><td class="nw">상</td><td class="nw">상</td>
+      <td class="gr">확정 화면에 한 줄 추가입니다. 오해를 막는 값이 큽니다</td></tr>
+    <tr><td class="nw">Should</td><td class="nw">&#9314; 상담 범위 안내</td><td class="nw">중</td><td class="nw">상</td>
+      <td>내용을 정리하는 데 시간이 듭니다. 문구 자체는 넣기 쉽습니다</td></tr>
+    <tr><td class="nw">Won't</td><td class="nw">지원금 가능 여부를<br>앱이 판정</td><td class="nw">—</td><td class="nw">—</td>
+      <td>규정을 모르는 채 가능하다고 답하면 안 됩니다. 확인 주체를 알려주는 선까지만 합니다</td></tr>
+    <tr><td class="nw">Won't</td><td class="nw">질문을 받아<br>저장하고 답하기</td><td class="nw">중</td><td class="nw">하</td>
+      <td>질문을 담을 자리를 새로 만들어야 합니다. 그리고 앱이 답할 수 없는 질문이라 저장해도 해결되지 않습니다</td></tr>
+  </table>
+  </div>
+
+  </div>
 
   <footer>
-    <p>손지은 · Step 6 확정대기 · Service Blueprint As-Is → To-Be · 2026-09-07</p>
+    <p>Service Blueprint As-Is → To-Be · 2026-09-07</p>
+    <p>손지은은 확정대기, 이완식은 상담신청을 타겟으로 잡았습니다.</p>
   </footer>
 
 </div>
