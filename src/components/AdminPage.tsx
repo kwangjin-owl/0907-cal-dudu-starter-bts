@@ -154,6 +154,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
 
   const currentRequest = selectedRequest ? requests.find(r => r.request.id === selectedRequest) : null;
 
+  // 고객 UUID를 C01, C02... 라벨로 바꾸기 (먼저 신청한 순서)
+  const customerLabels = new Map<string, string>();
+  requests.forEach(item => {
+    const id = item.request.customerId;
+    if (!customerLabels.has(id)) {
+      customerLabels.set(id, `C${String(customerLabels.size + 1).padStart(2, '0')}`);
+    }
+  });
+  const labelOf = (id: string) => `${customerLabels.get(id) ?? '??'} (${id.slice(0, 8)})`;
+
   return (
     <div className="admin-page">
       <h2>어드민 패널</h2>
@@ -184,7 +194,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
                   }}
                 >
                   <div>
-                    <strong>#{idx + 1}</strong> {item.request.customerId} (v
+                    <strong>#{idx + 1}</strong> {labelOf(item.request.customerId)} (v
                     {item.request.version})
                     <br />
                     <span style={{ fontSize: '12px', color: '#666' }}>
@@ -212,7 +222,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
             <div style={{ padding: '16px', background: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
               <div className="form-group">
                 <label>고객 코드</label>
-                <input type="text" value={currentRequest.request.customerId} disabled />
+                <input type="text" value={labelOf(currentRequest.request.customerId)} disabled />
               </div>
 
               <div className="form-group">
