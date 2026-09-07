@@ -223,3 +223,69 @@ export async function notifyConfirm(
     return { success: false, error: String(e) };
   }
 }
+
+// ── 구글 로그인 + 캘린더 ────────────────────────────────────────
+// 로그인할 때 캘린더에 일정을 넣을 권한까지 함께 받는다.
+export async function signInWithGoogle() {
+  const client = getSupabaseClient();
+  if (!client) throw new Error('Supabase not configured');
+
+  const { error } = await client.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      scopes: 'https://www.googleapis.com/auth/calendar.events',
+      redirectTo: window.location.origin,
+      queryParams: { access_type: 'offline', prompt: 'consent' },
+    },
+  });
+  if (error) throw error;
+}
+
+// 구글로 로그인했을 때만 값이 있다. 캘린더 API를 부를 때 쓰는 열쇠.
+export async function getGoogleToken(): Promise<string | null> {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { data } = await client.auth.getSession();
+  return (data.session as unknown as { provider_token?: string })?.provider_token ?? null;
+}
+
+// 확정된 시간을 내 구글 캘린더에 바로 넣는다.
+export async function addEventToGoogleCalendar(
+  date: string,
+  timeLabel: string
+): Promise<{ success: boolean; error?: string }> {
+  const token = await getGoogleToken();
+  if (!token) {
+    return { success: false, error: '구글로 로그인해야 캘린더에 넣을 수 있습니다' };
+  }
+
+  const startHour: Record<string, string> = { am: '09:00:00', pm: '13:00:00', ev: '18:00:00' };
+  const endHour: Record<string, string> = { am: '10:00:00', pm: '14:00:00', ev: '19:00:00' };
+  const label = startHour[timeLabel] ? timeLabel : 'am';
+
+  try {
+    const res = await fetch(
+      'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          summary: 'cal.dudu-works 예약',
+          description: '예약이 확정되었습니다.',
+          start: { dateTime: `${date}T${startHour[label]}`, timeZone: 'Asia/Seoul' },
+          end: { dateTime: `${date}T${endHour[label]}`, timeZone: 'Asia/Seoul' },
+        }),
+      }
+    );
+    if (!res.ok) {
+      const detail = await res.text();
+      return { success: false, error: `캘린더 등록 실패 (${res.status}) ${detail.slice(0, 120)}` };
+    }
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: String(e) };
+  }
+}

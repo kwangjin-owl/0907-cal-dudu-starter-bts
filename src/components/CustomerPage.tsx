@@ -20,6 +20,28 @@ function elapsedText(createdAt: string | Date): string {
   return `${day}일 ${hour % 24}시간`;
 }
 
+// 확정된 슬롯을 구글 캘린더에 넣는 링크를 만든다.
+// 누르면 일정이 미리 채워진 채로 캘린더가 열리고, 저장만 누르면 등록된다.
+function calendarUrl(date: string, timeLabel: string): string {
+  // 슬롯 시작 시각(한국 시간) → UTC. 한국은 UTC+9.
+  const startHourKST: Record<string, number> = { am: 9, pm: 13, ev: 18 };
+  const hour = startHourKST[timeLabel] ?? 9;
+  const [y, m, d] = date.split('-').map(Number);
+  const start = new Date(Date.UTC(y, m - 1, d, hour - 9, 0, 0));
+  const end = new Date(start.getTime() + 60 * 60 * 1000); // 1시간
+
+  const fmt = (dt: Date) =>
+    dt.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: 'cal.dudu-works 예약',
+    dates: `${fmt(start)}/${fmt(end)}`,
+    details: '예약이 확정되었습니다. 자세한 내용은 앱의 내 신청 현황에서 확인하세요.',
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
 interface CustomerPageProps {
   db: DatabaseManager;
   mode: 'local' | 'supabase';
@@ -50,6 +72,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
 
   // 다음 확인까지 남은 초, 지금 확인 중인지
   const [countdown, setCountdown] = useState<number>(REFRESH_SEC);
+  const [calMsg, setCalMsg] = useState<string>('');
+  const [calBusy, setCalBusy] = useState(false);
   const [checking, setChecking] = useState(false);
 
   // 확정을 기다리는 중인지 (접수됨 상태가 하나라도 있으면 대기 중)
@@ -503,6 +527,55 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                   <strong>확정됨!</strong> {slots[item.request.confirmedSlotId!]?.date}{' '}
                   {TIME_SLOTS.find(t => t.label === slots[item.request.confirmedSlotId!]?.timeLabel)?.displayLabel}에
                   확정되었습니다.
+                  {slots[item.request.confirmedSlotId!] && (
+                    <div style={{ marginTop: '10px' }}>
+                      <a
+                        href={calendarUrl(
+                          slots[item.request.confirmedSlotId!].date,
+                          slots[item.request.confirmedSlotId!].timeLabel
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-block', padding: '7px 14px', fontSize: '13px',
+                          fontWeight: 'bold', color: 'white', background: '#1a73e8',
+                          borderRadius: '4px', textDecoration: 'none',
+                        }}
+                      >
+                        구글 캘린더에 추가
+                      </a>
+                      <button
+                        type="button"
+                        disabled={calBusy}
+                        onClick={async () => {
+                          setCalBusy(true);
+                          setCalMsg('');
+                          const slot = slots[item.request.confirmedSlotId!];
+                          const r = await supabaseApi.addEventToGoogleCalendar(
+                            slot.date, slot.timeLabel
+                          );
+                          setCalMsg(r.success ? '내 캘린더에 등록했습니다.' : r.error || '등록 실패');
+                          setCalBusy(false);
+                        }}
+                        style={{
+                          marginLeft: '8px', padding: '7px 14px', fontSize: '13px',
+                          fontWeight: 'bold', color: 'white', background: '#0f9d58',
+                          border: 'none', borderRadius: '4px', cursor: 'pointer',
+                        }}
+                      >
+                        {calBusy ? '등록 중...' : '내 캘린더에 바로 넣기'}
+                      </button>
+                      {calMsg && (
+                        <div style={{ fontSize: '12px', color: '#333', marginTop: '8px' }}>
+                          {calMsg}
+                        </div>
+                      )}
+                      <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+                        왼쪽은 캘린더를 열어 직접 저장하는 방식이고,
+                        오른쪽은 구글로 로그인했을 때 바로 등록하는 방식입니다.
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
