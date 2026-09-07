@@ -158,6 +158,22 @@ const App: React.FC = () => {
         </>
       )}
 
+      {/* 산출물 바로 열기 */}
+      <a
+        href="/service_blueprint.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          position: 'fixed', right: '20px', bottom: '20px', zIndex: 100,
+          display: 'inline-block', padding: '10px 16px',
+          background: '#14263B', color: 'white', fontSize: '13px', fontWeight: 'bold',
+          borderRadius: '4px', textDecoration: 'none',
+          boxShadow: '0 2px 8px rgba(20,38,59,0.3)',
+        }}
+      >
+        Service Blueprint (As-Is → To-Be)
+      </a>
+
       <hr style={{ margin: '40px 0', borderColor: '#ddd' }} />
       <div style={{ fontSize: '12px', color: '#666', textAlign: 'center', paddingBottom: '20px' }}>
         <p>cal.dudu-works.com v1.0 - 수업용 기본 실습 앱</p>
