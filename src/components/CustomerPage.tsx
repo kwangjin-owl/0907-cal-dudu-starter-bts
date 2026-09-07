@@ -399,7 +399,10 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
               <strong>확정을 기다리는 중입니다.</strong>{' '}
               관리자가 신청하신 시간 중 하나를 확정하면 이 화면이 자동으로 바뀝니다.
               확정 안내는 접수 순서대로, 하루 안에 드립니다.
-              <div style={{ fontSize: '13px', marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                fontSize: '13px', marginTop: '10px', display: 'flex',
+                alignItems: 'center', gap: '10px', height: '30px',
+              }}>
                 {checking ? (
                   <strong style={{ color: '#0b5ed7' }}>지금 확인하는 중…</strong>
                 ) : (

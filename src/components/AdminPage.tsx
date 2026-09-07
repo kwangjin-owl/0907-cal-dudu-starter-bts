@@ -7,6 +7,19 @@ import { TIME_SLOTS } from '../utils/constants';
 import * as supabaseApi from '../utils/supabase';
 import { decideRequestStatus } from '../utils/decide';
 
+// 접수 시각부터 지금까지 얼마나 지났는지 사람이 읽는 말로 바꾼다
+function elapsedText(createdAt: string | Date): string {
+  const ms = Date.now() - new Date(createdAt).getTime();
+  if (ms < 0) return '방금';
+  const min = Math.floor(ms / 60000);
+  if (min < 1) return '방금';
+  if (min < 60) return `${min}분`;
+  const hour = Math.floor(min / 60);
+  if (hour < 24) return `${hour}시간`;
+  const day = Math.floor(hour / 24);
+  return `${day}일`;
+}
+
 interface AdminPageProps {
   db: DatabaseManager;
   mode: 'local' | 'supabase';
@@ -200,6 +213,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
                     <span style={{ fontSize: '12px', color: '#666' }}>
                       {new Date(item.request.createdAt).toLocaleString()}
                     </span>
+                    {item.request.status !== 'confirmed' && (
+                      <span style={{
+                        marginLeft: '8px', fontSize: '12px', fontWeight: 'bold',
+                        color: '#b4472e', background: '#fbf1ef',
+                        border: '1px solid #e3c5bd', borderRadius: '3px', padding: '1px 6px',
+                      }}>
+                        {elapsedText(item.request.createdAt)} 대기 중
+                      </span>
+                    )}
                     <br />
                     <span className={`slot-status ${item.request.status === 'confirmed' ? 'confirmed' : 'available'}`}>
                       {item.request.status === 'confirmed'
