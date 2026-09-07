@@ -29,7 +29,6 @@ const App: React.FC = () => {
             const admin = await getAdminStatus();
             setRole(admin ? 'admin' : 'customer');
           } else {
-            setAuthError('로그인 필요');
             setRole('customer');
           }
         } else {
@@ -55,8 +54,7 @@ const App: React.FC = () => {
     try {
       await signOut();
       setUserId(null);
-      setAuthError('로그아웃되었습니다');
-      setTimeout(() => setAuthError(''), 3000);
+      window.location.reload();
     } catch (error) {
       setAuthError(`로그아웃 실패: ${String(error)}`);
     }
@@ -117,7 +115,7 @@ const App: React.FC = () => {
               <button
                 className="btn btn-secondary"
                 onClick={handleSignOut}
-                style={{ padding: '6px 12px', fontSize: '12px' }}
+                style={{ padding: '6px 12px', fontSize: '12px', background: '#6c757d', color: 'white', border: 'none' }}
               >
                 로그아웃
               </button>
@@ -126,7 +124,7 @@ const App: React.FC = () => {
               <button
                 className="btn btn-secondary"
                 onClick={handleResetData}
-                style={{ padding: '6px 12px', fontSize: '12px' }}
+                style={{ padding: '6px 12px', fontSize: '12px', background: '#6c757d', color: 'white', border: 'none' }}
               >
                 데이터 초기화
               </button>
