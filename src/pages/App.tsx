@@ -53,11 +53,16 @@ const App: React.FC = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      setUserId(null);
-      window.location.reload();
     } catch (error) {
-      setAuthError(`로그아웃 실패: ${String(error)}`);
+      // 세션이 이미 없는 경우는 이미 로그아웃된 것이므로 오류로 보지 않는다
+      const msg = String(error);
+      if (!msg.includes('Auth session missing')) {
+        setAuthError(`로그아웃 실패: ${msg}`);
+        return;
+      }
     }
+    setUserId(null);
+    window.location.reload();
   };
 
   const handleResetData = () => {
