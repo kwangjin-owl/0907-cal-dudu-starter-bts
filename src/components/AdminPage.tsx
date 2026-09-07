@@ -4,14 +4,17 @@ import type { Slot, Request, Candidate, OperationLog } from '../types';
 import { OperationManager } from '../utils/operations';
 import { DatabaseManager } from '../utils/database';
 import { TIME_SLOTS } from '../utils/constants';
+import * as supabaseApi from '../utils/supabase';
+import { decideRequestStatus } from '../utils/decide';
 
 interface AdminPageProps {
   db: DatabaseManager;
   mode: 'local' | 'supabase';
+  userId?: string | null;
 }
 
-export const AdminPage: React.FC<AdminPageProps> = ({ db }) => {
-  const [adminId] = useState<string>('ADMIN001');
+export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
+  const [adminId] = useState<string>(userId || 'ADMIN001');
   const [slots, setSlots] = useState<Record<string, Slot>>({});
   const [requests, setRequests] = useState<
     Array<{ request: Request; candidates: Candidate[]; decision: any }>
@@ -28,15 +31,90 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db }) => {
   // 초기 로드
   useEffect(() => {
     loadData();
-  }, []);
+  }, [mode, userId]);
 
-  const loadData = () => {
+  const loadData = async () => {
+    if (mode === 'supabase' && userId) {
+      await loadSupabaseData();
+    } else {
+      loadLocalData();
+    }
+  };
+
+  const loadLocalData = () => {
     const state = db.getState();
     setSlots(state.slots);
     setRequests(om.getAdminRequests());
     setLogs(state.logs || []);
     setError('');
     setSuccess('');
+  };
+
+  const loadSupabaseData = async () => {
+    try {
+      const slotData = await supabaseApi.getSlots() as any[];
+      const { requests: requestData, candidates: candidateData } = await supabaseApi.getAllRequests();
+      const logsData = await supabaseApi.getLogs() as any[];
+
+      const slotMap: Record<string, Slot> = {};
+      slotData.forEach((s: any) => {
+        slotMap[s.id] = {
+          id: s.id,
+          date: s.date,
+          timeLabel: s.time_label,
+          status: s.status as 'available' | 'confirmed',
+          confirmedAt: s.confirmed_at,
+          confirmedBy: s.confirmed_by,
+        };
+      });
+
+      const convertedRequests = requestData.map((r: any) => ({
+        id: r.id,
+        customerId: r.customer_id,
+        version: r.version,
+        createdAt: r.created_at,
+        status: r.status as 'received' | 'needs_reselection' | 'confirmed',
+        confirmedSlotId: r.confirmed_slot_id,
+        confirmedAt: r.confirmed_at,
+      }));
+
+      const convertedCandidates = candidateData.map((c: any) => ({
+        id: c.id,
+        requestId: c.request_id,
+        slotId: c.slot_id,
+        priority: c.priority,
+        version: c.version,
+        queueSeq: c.queue_seq,
+      }));
+
+      const status = convertedRequests
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        .map(req => ({
+          request: req,
+          candidates: convertedCandidates.filter(c => c.requestId === req.id).sort((a, b) => a.priority - b.priority),
+          decision: decideRequestStatus(req, convertedCandidates, slotMap),
+        }));
+
+      setSlots(slotMap);
+      setRequests(status);
+
+      const convertedLogs = logsData.map((l: any) => ({
+        id: l.id,
+        timestamp: l.created_at || l.timestamp,
+        action: l.action as 'submit' | 'confirm' | 'reselect',
+        requestId: l.request_id || '',
+        adminId: l.admin_id,
+        slotId: l.slot_id,
+        status: l.status as 'success' | 'failed',
+        error: l.error_message,
+      }));
+
+      setLogs(convertedLogs);
+      setError('');
+      setSuccess('');
+    } catch (err) {
+      setError(`데이터 조회 실패: ${String(err)}`);
+    }
   };
 
   const handleConfirm = async () => {
@@ -51,12 +129,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db }) => {
 
     try {
       const operationId = `confirm-${selectedRequest}-${selectedSlotForConfirm}-${Date.now()}`;
-      const result = await om.confirmRequest(
-        selectedRequest,
-        selectedSlotForConfirm,
-        adminId,
-        operationId
-      );
+      let result;
+
+      if (mode === 'supabase' && userId) {
+        result = await supabaseApi.confirmRequest(selectedRequest, selectedSlotForConfirm, userId, operationId);
+      } else {
+        result = await om.confirmRequest(selectedRequest, selectedSlotForConfirm, adminId, operationId);
+      }
 
       if (result.success) {
         setSuccess(`확정되었습니다! 영향받은 요청: ${result.affectedRequests?.length || 0}건`);
@@ -67,7 +146,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db }) => {
         setError(result.error || '확정 실패');
       }
     } catch (err) {
-      setError(String(err));
+      setError(`확정 오류: ${String(err)}`);
     } finally {
       setLoading(false);
     }
