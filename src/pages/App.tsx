@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CustomerPage } from '../components/CustomerPage';
 import { AdminPage } from '../components/AdminPage';
+import { LoginPage } from '../components/LoginPage';
 import { DatabaseManager } from '../utils/database';
 import { REFERENCE_TIME } from '../utils/constants';
 import { isSupabaseConfigured, getCurrentUser, getAdminStatus, signOut } from '../utils/supabase';
@@ -151,10 +152,7 @@ const App: React.FC = () => {
       )}
 
       {mode === 'supabase' && !userId ? (
-        <div className="auth-placeholder">
-          <p>Supabase 인증 로그인 페이지를 구현하세요.</p>
-          <p>임시: 테스트 사용자는 Supabase 콘솔에서 생성해주세요.</p>
-        </div>
+        <LoginPage onLoginSuccess={() => window.location.reload()} />
       ) : (
         <>
           {role === 'customer' && <CustomerPage db={db} mode={mode} userId={userId} />}
