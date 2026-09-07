@@ -237,13 +237,21 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
     <div className="customer-page">
       <div className="form-group">
         <label>고객 코드</label>
-        <input
-          type="text"
-          value={customerId}
-          onChange={e => setCustomerId(e.target.value)}
-          placeholder="C01"
-          disabled={stage === 'confirm'}
-        />
+        {mode === 'supabase' ? (
+          <input
+            type="text"
+            value={userId ? `내 계정 (${userId.slice(0, 8)})` : '로그인 필요'}
+            disabled
+          />
+        ) : (
+          <input
+            type="text"
+            value={customerId}
+            onChange={e => setCustomerId(e.target.value)}
+            placeholder="C01"
+            disabled={stage === 'confirm'}
+          />
+        )}
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
