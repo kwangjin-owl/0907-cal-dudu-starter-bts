@@ -151,7 +151,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
       }
 
       if (result.success) {
-        setSuccess(`확정되었습니다! 영향받은 요청: ${result.affectedRequests?.length || 0}건`);
+        let msg = `확정되었습니다! 영향받은 요청: ${result.affectedRequests?.length || 0}건`;
+
+        // 확정이 실제로 저장된 뒤에만 고객에게 메일을 보낸다.
+        // 메일이 실패해도 확정 자체는 이미 성공한 것이므로 안내만 덧붙인다.
+        if (mode === 'supabase') {
+          const mail = await supabaseApi.notifyConfirm(selectedRequest);
+          msg += mail.success
+            ? ` · 고객에게 메일을 보냈습니다`
+            : ` · 메일은 보내지 못했습니다 (${mail.error})`;
+        }
+
+        setSuccess(msg);
         setSelectedRequest(null);
         setSelectedSlotForConfirm(null);
         setTimeout(() => loadData(), 500);

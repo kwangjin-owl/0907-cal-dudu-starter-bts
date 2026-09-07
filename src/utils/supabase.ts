@@ -203,3 +203,23 @@ export async function getLogs() {
 export function isSupabaseConfigured(): boolean {
   return !!supabaseUrl && !!supabaseAnonKey;
 }
+
+// 확정된 예약을 고객 이메일로 알리는 Edge Function을 호출한다.
+// 메일 발송은 서버(Edge Function)에서만 하고, 브라우저는 요청만 보낸다.
+export async function notifyConfirm(
+  requestId: string
+): Promise<{ success: boolean; error?: string }> {
+  const client = getSupabaseClient();
+  if (!client) return { success: false, error: 'Supabase 설정 없음' };
+
+  try {
+    const { data, error } = await client.functions.invoke('notify-confirm', {
+      body: { requestId },
+    });
+    if (error) return { success: false, error: error.message };
+    if (data?.error) return { success: false, error: String(data.error) };
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: String(e) };
+  }
+}
