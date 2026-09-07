@@ -7,6 +7,19 @@ import { decideRequestStatus } from '../utils/decide';
 import { TIME_SLOTS } from '../utils/constants';
 import * as supabaseApi from '../utils/supabase';
 
+// 접수 시각부터 지금까지 얼마나 지났는지 사람이 읽는 말로 바꾼다
+function elapsedText(createdAt: string | Date): string {
+  const ms = Date.now() - new Date(createdAt).getTime();
+  if (ms < 0) return '방금';
+  const min = Math.floor(ms / 60000);
+  if (min < 1) return '1분 미만';
+  if (min < 60) return `${min}분`;
+  const hour = Math.floor(min / 60);
+  if (hour < 24) return `${hour}시간`;
+  const day = Math.floor(hour / 24);
+  return `${day}일 ${hour % 24}시간`;
+}
+
 interface CustomerPageProps {
   db: DatabaseManager;
   mode: 'local' | 'supabase';
@@ -32,6 +45,23 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
   useEffect(() => {
     loadData();
   }, [customerId, userId, mode]);
+
+  // 마지막으로 화면을 갱신한 시각 (자동 갱신 표시용)
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date>(new Date());
+
+  // 확정을 기다리는 중인지 (접수됨 상태가 하나라도 있으면 대기 중)
+  const isWaiting = customerRequests.some(item => item.request.status === 'received');
+
+  // 자동 갱신: 대기 중일 때만 30초마다 다시 조회한다.
+  // 알림을 보내는 게 아니라 화면이 스스로 최신 상태를 다시 읽어오는 것.
+  useEffect(() => {
+    if (stage !== 'view' || !isWaiting) return;
+    const timer = setInterval(() => {
+      loadData();
+      setLastSyncedAt(new Date());
+    }, 30000);
+    return () => clearInterval(timer);
+  }, [stage, isWaiting, customerId, userId, mode]);
 
   const loadData = async () => {
     if (mode === 'supabase' && userId) {
@@ -350,9 +380,28 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
       {stage === 'view' && customerRequests.length > 0 && (
         <div>
           <h3>내 신청 현황</h3>
+
+          {isWaiting && (
+            <div className="alert alert-info" style={{ marginBottom: '16px' }}>
+              <strong>확정을 기다리는 중입니다.</strong>{' '}
+              관리자가 신청하신 시간 중 하나를 확정하면 이 화면이 자동으로 바뀝니다.
+              확정 안내는 접수 순서대로, 하루 안에 드립니다.
+              <div style={{ fontSize: '12px', color: '#666', marginTop: '6px' }}>
+                이 화면은 30초마다 저절로 새로고침됩니다.
+                마지막 확인: {lastSyncedAt.toLocaleTimeString()}
+              </div>
+            </div>
+          )}
+
           {customerRequests.map((item, idx) => (
             <div key={item.request.id} style={{ marginBottom: '20px', padding: '16px', background: 'white', borderRadius: '4px', border: '1px solid #ddd' }}>
               <h4>신청 #{item.request.version} (접수일: {new Date(item.request.createdAt).toLocaleString()})</h4>
+
+              {item.request.status === 'received' && (
+                <p style={{ fontSize: '13px', color: '#666', margin: '-6px 0 12px' }}>
+                  접수한 지 <strong>{elapsedText(item.request.createdAt)}</strong> 지났습니다.
+                </p>
+              )}
 
               <div className="form-group">
                 <label>상태</label>
@@ -389,6 +438,26 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                   })}
                 </ul>
               </div>
+
+              {item.request.status === 'received' && (() => {
+                const openCount = item.candidates.filter(
+                  c => slots[c.slotId]?.status === 'available'
+                ).length;
+                if (openCount === 0) return null;
+                if (openCount === 1) {
+                  return (
+                    <div className="alert alert-warning">
+                      <strong>남은 시간이 1개입니다.</strong>{' '}
+                      이 시간마저 다른 분에게 확정되면 처음부터 다시 골라야 합니다.
+                    </div>
+                  );
+                }
+                return (
+                  <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px' }}>
+                    아직 선택할 수 있는 시간이 {openCount}개 남아 있습니다.
+                  </p>
+                );
+              })()}
 
               {item.request.status === 'confirmed' && (
                 <div className="alert alert-success">
