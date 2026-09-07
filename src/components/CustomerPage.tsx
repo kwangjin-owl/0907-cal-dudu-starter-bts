@@ -542,7 +542,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                           borderRadius: '4px', textDecoration: 'none',
                         }}
                       >
-                        구글 캘린더에 추가
+                        구글 캘린더 열기
                       </a>
                       <button
                         type="button"
@@ -563,16 +563,19 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                           border: 'none', borderRadius: '4px', cursor: 'pointer',
                         }}
                       >
-                        {calBusy ? '등록 중...' : '내 캘린더에 바로 넣기'}
+                        {calBusy ? '등록 중...' : '구글 캘린더에 바로 등록'}
                       </button>
                       {calMsg && (
                         <div style={{ fontSize: '12px', color: '#333', marginTop: '8px' }}>
                           {calMsg}
                         </div>
                       )}
-                      <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-                        왼쪽은 캘린더를 열어 직접 저장하는 방식이고,
-                        오른쪽은 구글로 로그인했을 때 바로 등록하는 방식입니다.
+                      <div style={{ fontSize: '12px', color: '#666', marginTop: '8px', lineHeight: 1.6 }}>
+                        <b>구글 캘린더 열기</b> · 캘린더가 새 창으로 열리고 일정이 미리 채워져 있습니다.
+                        내용을 확인하고 저장 버튼을 누르시면 됩니다.
+                        <br />
+                        <b>구글 캘린더에 바로 등록</b> · 창을 열지 않고 이 자리에서 바로 등록됩니다.
+                        구글로 로그인하셨을 때만 됩니다.
                       </div>
                     </div>
                   )}
