@@ -51,8 +51,25 @@ export async function signOut() {
   const client = getSupabaseClient();
   if (!client) throw new Error('Supabase not configured');
 
-  const { error } = await client.auth.signOut();
-  if (error) throw error;
+  // 서버 로그아웃은 세션이 이미 없으면 실패할 수 있다.
+  // 실패해도 아래에서 브라우저에 남은 로그인 정보를 직접 지운다.
+  try {
+    await client.auth.signOut({ scope: 'local' });
+  } catch {
+    // 무시
+  }
+
+  // 새로고침해도 다시 로그인되지 않도록 저장된 세션을 확실히 지운다.
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const k = window.localStorage.key(i);
+      if (k && (k.startsWith('sb-') || k.includes('supabase.auth'))) keys.push(k);
+    }
+    keys.forEach(k => window.localStorage.removeItem(k));
+  } catch {
+    // 무시
+  }
 }
 
 export async function getCurrentUser() {
