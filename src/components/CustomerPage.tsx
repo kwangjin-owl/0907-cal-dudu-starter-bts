@@ -46,21 +46,34 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
     loadData();
   }, [customerId, userId, mode]);
 
-  // 마지막으로 화면을 갱신한 시각 (자동 갱신 표시용)
-  const [lastSyncedAt, setLastSyncedAt] = useState<Date>(new Date());
+  const REFRESH_SEC = 30;
+
+  // 다음 확인까지 남은 초, 지금 확인 중인지
+  const [countdown, setCountdown] = useState<number>(REFRESH_SEC);
+  const [checking, setChecking] = useState(false);
 
   // 확정을 기다리는 중인지 (접수됨 상태가 하나라도 있으면 대기 중)
   const isWaiting = customerRequests.some(item => item.request.status === 'received');
 
-  // 자동 갱신: 대기 중일 때만 30초마다 다시 조회한다.
+  // 자동 갱신: 대기 중일 때만 1초씩 세다가 0이 되면 다시 조회한다.
   // 알림을 보내는 게 아니라 화면이 스스로 최신 상태를 다시 읽어오는 것.
   useEffect(() => {
-    if (stage !== 'view' || !isWaiting) return;
-    const timer = setInterval(() => {
-      loadData();
-      setLastSyncedAt(new Date());
-    }, 30000);
-    return () => clearInterval(timer);
+    if (stage !== 'view' || !isWaiting) {
+      setCountdown(REFRESH_SEC);
+      return;
+    }
+    const tick = setInterval(() => {
+      setCountdown(prev => {
+        if (prev > 1) return prev - 1;
+        // 0에 닿으면 다시 읽어오고 처음부터 다시 센다
+        setChecking(true);
+        loadData().finally(() => {
+          setTimeout(() => setChecking(false), 700);
+        });
+        return REFRESH_SEC;
+      });
+    }, 1000);
+    return () => clearInterval(tick);
   }, [stage, isWaiting, customerId, userId, mode]);
 
   const loadData = async () => {
@@ -386,9 +399,32 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
               <strong>확정을 기다리는 중입니다.</strong>{' '}
               관리자가 신청하신 시간 중 하나를 확정하면 이 화면이 자동으로 바뀝니다.
               확정 안내는 접수 순서대로, 하루 안에 드립니다.
-              <div style={{ fontSize: '12px', color: '#666', marginTop: '6px' }}>
-                이 화면은 30초마다 저절로 새로고침됩니다.
-                마지막 확인: {lastSyncedAt.toLocaleTimeString()}
+              <div style={{ fontSize: '13px', marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {checking ? (
+                  <strong style={{ color: '#0b5ed7' }}>지금 확인하는 중…</strong>
+                ) : (
+                  <>
+                    <span style={{ color: '#666' }}>다음 확인까지</span>
+                    <strong style={{
+                      fontSize: '17px', color: '#0b5ed7',
+                      minWidth: '46px', textAlign: 'center',
+                      background: 'white', border: '1px solid #b6d4fe',
+                      borderRadius: '4px', padding: '1px 6px',
+                    }}>
+                      {countdown}초
+                    </strong>
+                  </>
+                )}
+                <span style={{
+                  flex: 1, height: '6px', background: '#d7e6fa',
+                  borderRadius: '3px', overflow: 'hidden',
+                }}>
+                  <span style={{
+                    display: 'block', height: '100%',
+                    width: `${((REFRESH_SEC - countdown) / REFRESH_SEC) * 100}%`,
+                    background: '#0b5ed7', transition: 'width 1s linear',
+                  }} />
+                </span>
               </div>
             </div>
           )}
