@@ -471,82 +471,23 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                     </span>
                   </div>
                 </div>
-              ) : (
+              ) : item.request.status === 'confirmed' ? (
                 <div style={{
-                  padding: '12px 16px', borderRadius: '4px', marginBottom: '16px',
-                  fontWeight: 'bold', fontSize: '15px',
-                  background: item.request.status === 'confirmed' ? '#d4edda' : '#fff3cd',
-                  color: item.request.status === 'confirmed' ? '#155724' : '#856404',
+                  padding: '14px 16px', borderRadius: '4px', marginBottom: '16px',
+                  background: '#d4edda', color: '#155724',
                 }}>
-                  {item.request.status === 'confirmed' && '\u2713 예약 확정됨'}
-                  {item.request.status === 'needs_reselection' && '\u26A0 다시 선택해 주세요'}
-                </div>
-              )}
-
-              <div className="form-group">
-                <label>선택한 슬롯 (우선순위 순)</label>
-                <ul className="list">
-                  {item.candidates.map((c, cidx) => {
-                    const slot = slots[c.slotId];
-                    const isAvailable = slot?.status === 'available';
-                    const waiting = item.request.status === 'received';
-                    return (
-                      <li key={c.id}>
-                        <span>
-                          {cidx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
-                          {' '}
-                          <span style={{
-                            marginLeft: '10px', fontSize: '12px',
-                            color: !isAvailable ? '#dc3545' : (waiting ? '#888' : '#28a745'),
-                          }}>
-                            {isAvailable
-                              ? (waiting ? '(아직 마감 안 됨)' : '(가능)')
-                              : '(마감)'}
-                          </span>
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-
-              {item.request.status === 'received' && (() => {
-                const openCount = item.candidates.filter(
-                  c => slots[c.slotId]?.status === 'available'
-                ).length;
-                const totalCount = item.candidates.length;
-                if (openCount === 0) return null;
-                if (openCount === 1) {
-                  return (
-                    <div className="alert alert-warning">
-                      <strong>신청하신 {totalCount}개 중 1개만 남았습니다.</strong>{' '}
-                      이 시간마저 다른 분에게 확정되면 처음부터 다시 골라야 합니다.
-                    </div>
-                  );
-                }
-                return (
-                  <div style={{
-                    margin: '0 0 12px', padding: '12px 14px',
-                    background: '#f6f6f6', borderLeft: '4px solid #999',
-                    borderRadius: '4px',
-                  }}>
-                    <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#333' }}>
-                      신청하신 {totalCount}개 중 {openCount}개가 아직 마감되지 않았습니다.
-                    </div>
-                    <div style={{ fontSize: '14px', color: '#555', marginTop: '6px' }}>
-                      신청만으로는 시간이 잡히지 않습니다. 관리자가 확정해야 내 시간이 됩니다.
-                    </div>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                    {'\u2713'} 예약 확정됨
                   </div>
-                );
-              })()}
-
-              {item.request.status === 'confirmed' && (
-                <div className="alert alert-success">
-                  <strong>확정됨!</strong> {slots[item.request.confirmedSlotId!]?.date}{' '}
-                  {TIME_SLOTS.find(t => t.label === slots[item.request.confirmedSlotId!]?.timeLabel)?.displayLabel}에
-                  확정되었습니다.
+                  <div style={{ fontSize: '20px', fontWeight: 'bold', margin: '6px 0 4px' }}>
+                    {slots[item.request.confirmedSlotId!]?.date}{' '}
+                    {TIME_SLOTS.find(t => t.label === slots[item.request.confirmedSlotId!]?.timeLabel)?.displayLabel}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#1a6b3a', marginBottom: '12px' }}>
+                    신청하신 시간 중 위 시간으로 정해졌습니다.
+                  </div>
                   {slots[item.request.confirmedSlotId!] && (
-                    <div style={{ marginTop: '10px' }}>
+                    <div>
                       <a
                         href={calendarUrl(
                           slots[item.request.confirmedSlotId!].date,
@@ -588,7 +529,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                           {calMsg}
                         </div>
                       )}
-                      <div style={{ fontSize: '12px', color: '#666', marginTop: '8px', lineHeight: 1.6 }}>
+                      <div style={{ fontSize: '12px', color: '#3d7a55', marginTop: '8px', lineHeight: 1.6 }}>
                         <b>구글 캘린더 열기</b> · 캘린더가 새 창으로 열리고 일정이 미리 채워져 있습니다.
                         내용을 확인하고 저장 버튼을 누르시면 됩니다.
                         <br />
@@ -598,7 +539,93 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                     </div>
                   )}
                 </div>
+              ) : (
+                <div style={{
+                  padding: '12px 16px', borderRadius: '4px', marginBottom: '16px',
+                  fontWeight: 'bold', fontSize: '15px',
+                  background: '#fff3cd', color: '#856404',
+                }}>
+                  {'\u26A0'} 다시 선택해 주세요
+                </div>
               )}
+
+              <div className="form-group">
+                <label>선택한 슬롯 (우선순위 순)</label>
+                <ul className="list">
+                  {item.candidates.map((c, cidx) => {
+                    const slot = slots[c.slotId];
+                    const isAvailable = slot?.status === 'available';
+                    const waiting = item.request.status === 'received';
+                    const confirmed = item.request.status === 'confirmed';
+                    const isPicked = confirmed && c.slotId === item.request.confirmedSlotId;
+
+                    let label: string;
+                    let color: string;
+                    if (isPicked) {
+                      label = '(확정)';
+                      color = '#155724';
+                    } else if (confirmed) {
+                      label = '(선택 안 됨)';
+                      color = '#888';
+                    } else if (!isAvailable) {
+                      label = '(마감)';
+                      color = '#dc3545';
+                    } else if (waiting) {
+                      label = '(아직 마감 안 됨)';
+                      color = '#888';
+                    } else {
+                      label = '(가능)';
+                      color = '#28a745';
+                    }
+
+                    return (
+                      <li key={c.id}>
+                        <span style={{ fontWeight: isPicked ? 'bold' : 'normal' }}>
+                          {cidx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
+                          {' '}
+                          <span style={{
+                            marginLeft: '10px', fontSize: '12px',
+                            fontWeight: isPicked ? 'bold' : 'normal',
+                            color,
+                          }}>
+                            {label}
+                          </span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              {item.request.status === 'received' && (() => {
+                const openCount = item.candidates.filter(
+                  c => slots[c.slotId]?.status === 'available'
+                ).length;
+                const totalCount = item.candidates.length;
+                if (openCount === 0) return null;
+                if (openCount === 1) {
+                  return (
+                    <div className="alert alert-warning">
+                      <strong>신청하신 {totalCount}개 중 1개만 남았습니다.</strong>{' '}
+                      이 시간마저 다른 분에게 확정되면 처음부터 다시 골라야 합니다.
+                    </div>
+                  );
+                }
+                return (
+                  <div style={{
+                    margin: '0 0 12px', padding: '12px 14px',
+                    background: '#f6f6f6', borderLeft: '4px solid #999',
+                    borderRadius: '4px',
+                  }}>
+                    <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#333' }}>
+                      신청하신 {totalCount}개 중 {openCount}개가 아직 마감되지 않았습니다.
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#555', marginTop: '6px' }}>
+                      신청만으로는 시간이 잡히지 않습니다. 관리자가 확정해야 내 시간이 됩니다.
+                    </div>
+                  </div>
+                );
+              })()}
 
               {item.request.status === 'needs_reselection' && idx === customerRequests.length - 1 && (
                 <button
