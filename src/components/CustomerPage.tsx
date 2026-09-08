@@ -647,9 +647,19 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
       {stage === 'reselect' && customerRequests.length > 0 && (
         <div>
           <h3>슬롯 재선택</h3>
-          <p style={{ color: '#666', fontSize: '14px' }}>
-            이전 신청의 슬롯이 모두 마감되었습니다. 다시 선택해주세요.
-          </p>
+          <div style={{
+            padding: '14px 16px', borderRadius: '4px', marginBottom: '16px',
+            background: '#fff3cd', color: '#856404', borderLeft: '4px solid #ffc107',
+          }}>
+            <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
+              신청하신 시간이 모두 마감되었습니다.
+            </div>
+            <ul style={{ margin: 0, paddingLeft: '18px', lineHeight: '1.9', fontSize: '14px' }}>
+              <li>다른 분이 먼저 확정되어 자리가 없어졌습니다.</li>
+              <li>아래에서 <strong>다시 1~3개</strong>를 고르시면 됩니다.</li>
+              <li>다시 신청하면 <strong>새 접수로 처음부터 기다리게</strong> 됩니다.</li>
+            </ul>
+          </div>
           <SlotTable
             slots={slots}
             selectedSlots={selectedSlots}

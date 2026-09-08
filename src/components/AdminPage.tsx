@@ -238,8 +238,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
                       {item.request.status === 'confirmed'
                         ? '확정됨'
                         : item.request.status === 'needs_reselection'
-                          ? '재선택필요'
-                          : '접수됨'}
+                          ? '재선택 필요'
+                          : '확인 대기'}
                     </span>
                   </div>
                 </li>
@@ -266,8 +266,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
                     currentRequest.request.status === 'confirmed'
                       ? '확정됨'
                       : currentRequest.request.status === 'needs_reselection'
-                        ? '재선택필요'
-                        : '접수됨'
+                        ? '재선택 필요'
+                        : '확인 대기 (고객 화면에는 예약 확인중으로 보임)'
                   }
                   disabled
                 />
@@ -323,14 +323,24 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
               )}
 
               {currentRequest.request.status !== 'confirmed' && (
-                <button
-                  className="btn btn-success"
-                  onClick={handleConfirm}
-                  disabled={!selectedSlotForConfirm || loading}
-                  style={{ marginTop: '10px', width: '100%' }}
-                >
-                  {loading ? '처리 중...' : '확정'}
-                </button>
+                <>
+                  <div style={{
+                    marginTop: '10px', padding: '10px 12px', borderRadius: '4px',
+                    background: '#fff3cd', color: '#856404', fontSize: '13px',
+                    borderLeft: '4px solid #ffc107',
+                  }}>
+                    <b>확정하면 되돌릴 수 없습니다.</b> 그 시간은 마감되고,
+                    같은 시간을 신청한 다른 분의 후보에서도 빠집니다. 고객에게 메일도 바로 나갑니다.
+                  </div>
+                  <button
+                    className="btn btn-success"
+                    onClick={handleConfirm}
+                    disabled={!selectedSlotForConfirm || loading}
+                    style={{ marginTop: '10px', width: '100%' }}
+                  >
+                    {loading ? '처리 중...' : '확정'}
+                  </button>
+                </>
               )}
             </div>
           ) : (
