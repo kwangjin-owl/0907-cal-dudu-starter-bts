@@ -46,9 +46,10 @@ interface CustomerPageProps {
   db: DatabaseManager;
   mode: 'local' | 'supabase';
   userId?: string | null;
+  userEmail?: string | null;
 }
 
-export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) => {
+export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, userEmail }) => {
   const [customerId, setCustomerId] = useState<string>('C01');
   const [stage, setStage] = useState<'select' | 'confirm' | 'view' | 'reselect'>('select');
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
@@ -303,11 +304,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
   return (
     <div className="customer-page">
       <div className="form-group">
-        <label>고객 코드</label>
+        <label>{mode === 'supabase' ? '로그인 계정' : '고객 코드'}</label>
         {mode === 'supabase' ? (
           <input
             type="text"
-            value={userId ? `내 계정 (${userId.slice(0, 8)})` : '로그인 필요'}
+            value={userEmail ?? (userId ? userId.slice(0, 8) : '로그인 필요')}
             disabled
           />
         ) : (
@@ -325,10 +326,10 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
       {success && <div className="alert alert-success">{success}</div>}
 
       {stage === 'select' && (
-        <div>
-          <h3>시간 선택 (1~3개)</h3>
+        <div style={{ paddingBottom: '100px' }}>
+          <h3>슬롯 선택 (1~3개)</h3>
           <p style={{ color: '#666', fontSize: '14px' }}>
-            여러 개 고르면 그중 하나로 확정됩니다. 많이 고를수록 확정될 가능성이 큽니다.
+            원하는 슬롯을 선택하고 제출하세요. 선택 순서가 희망 우선순위입니다.
           </p>
           <SlotTable
             slots={slots}
@@ -340,10 +341,10 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
 
           {/* 표가 길어서 맨 아래까지 안 내려도 되게 화면 밑에 붙여 둔다 */}
           <div style={{
-            position: 'sticky', bottom: 0, zIndex: 20,
-            marginTop: '20px', padding: '14px 16px',
-            background: 'white', border: '1px solid #ccc',
-            borderRadius: '8px', boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
+            position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 30,
+            padding: '14px 24px',
+            background: 'white', borderTop: '1px solid #ccc',
+            boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
           }}>
             <div style={{
               display: 'flex', alignItems: 'center',
@@ -677,7 +678,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
       )}
 
       {stage === 'reselect' && customerRequests.length > 0 && (
-        <div>
+        <div style={{ paddingBottom: '100px' }}>
           <h3>슬롯 재선택</h3>
           <div style={{
             padding: '14px 16px', borderRadius: '4px', marginBottom: '16px',
@@ -701,10 +702,10 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
           />
 
           <div style={{
-            position: 'sticky', bottom: 0, zIndex: 20,
-            marginTop: '20px', padding: '14px 16px',
-            background: 'white', border: '1px solid #ccc',
-            borderRadius: '8px', boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
+            position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 30,
+            padding: '14px 24px',
+            background: 'white', borderTop: '1px solid #ccc',
+            boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
               <strong style={{ fontSize: '14px' }}>선택 {selectedSlots.length}/3</strong>
