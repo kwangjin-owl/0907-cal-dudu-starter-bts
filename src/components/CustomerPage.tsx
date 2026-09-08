@@ -326,7 +326,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
       {success && <div className="alert alert-success">{success}</div>}
 
       {stage === 'select' && (
-        <div style={{ paddingBottom: '100px' }}>
+        <div style={{ paddingBottom: '40px' }}>
           <h3>슬롯 선택 (1~3개)</h3>
           <p style={{ color: '#666', fontSize: '14px' }}>
             원하는 슬롯을 선택하고 제출하세요. 선택 순서가 희망 우선순위입니다.
@@ -681,7 +681,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
       )}
 
       {stage === 'reselect' && customerRequests.length > 0 && (
-        <div style={{ paddingBottom: '100px' }}>
+        <div style={{ paddingBottom: '40px' }}>
           <h3>슬롯 재선택</h3>
           <div style={{
             padding: '14px 16px', borderRadius: '4px', marginBottom: '16px',
