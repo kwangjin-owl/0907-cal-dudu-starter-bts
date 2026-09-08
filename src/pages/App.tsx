@@ -14,6 +14,7 @@ const App: React.FC = () => {
   const [role, setRole] = useState<Role>('customer');
   const [db] = useState(() => new DatabaseManager());
   const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
@@ -26,6 +27,7 @@ const App: React.FC = () => {
           const user = await getCurrentUser();
           if (user) {
             setUserId(user.id);
+            setUserEmail(user.email ?? null);
             const admin = await getAdminStatus();
             setRole(admin ? 'admin' : 'customer');
           } else {
@@ -62,6 +64,7 @@ const App: React.FC = () => {
       }
     }
     setUserId(null);
+    setUserEmail(null);
     window.location.reload();
   };
 
@@ -158,7 +161,7 @@ const App: React.FC = () => {
         <LoginPage onLoginSuccess={() => window.location.reload()} />
       ) : (
         <>
-          {role === 'customer' && <CustomerPage db={db} mode={mode} userId={userId} />}
+          {role === 'customer' && <CustomerPage db={db} mode={mode} userId={userId} userEmail={userEmail} />}
           {role === 'admin' && <AdminPage db={db} mode={mode} userId={userId} />}
         </>
       )}
