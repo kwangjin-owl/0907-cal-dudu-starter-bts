@@ -116,6 +116,18 @@ const App: React.FC = () => {
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginLeft: '20px' }}>
             {mode === 'local' && <span className={`mode-badge ${mode}`}>로컬 모드</span>}
+            <a
+              href="/service_blueprint.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                padding: '6px 12px', fontSize: '12px', fontWeight: 'bold',
+                color: '#14263B', textDecoration: 'none',
+                border: '1px solid #c7cdd4', borderRadius: '4px',
+              }}
+            >
+              Service Blueprint
+            </a>
             {mode === 'supabase' && userId && (
               <button
                 className="btn btn-secondary"
@@ -155,22 +167,6 @@ const App: React.FC = () => {
           {role === 'admin' && <AdminPage db={db} mode={mode} userId={userId} />}
         </>
       )}
-
-      {/* 산출물 바로 열기 */}
-      <a
-        href="/service_blueprint.html"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          position: 'fixed', right: '20px', bottom: '20px', zIndex: 100,
-          display: 'inline-block', padding: '10px 16px',
-          background: '#14263B', color: 'white', fontSize: '13px', fontWeight: 'bold',
-          borderRadius: '4px', textDecoration: 'none',
-          boxShadow: '0 2px 8px rgba(20,38,59,0.3)',
-        }}
-      >
-        Service Blueprint (As-Is → To-Be)
-      </a>
 
       <hr style={{ margin: '24px 0 12px', borderColor: '#e5e5e5' }} />
       <div style={{ fontSize: '12px', color: '#999', textAlign: 'center', paddingBottom: '16px' }}>
