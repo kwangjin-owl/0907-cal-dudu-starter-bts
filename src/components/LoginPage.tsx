@@ -49,7 +49,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     <div className="container">
       <div className="login-container">
         <h1>cal.dudu-works.com</h1>
-        <h2>Supabase 로그인</h2>
+        <h2>로그인</h2>
 
         {error && <div className="alert alert-error">{error}</div>}
 
@@ -114,19 +114,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0', textAlign: 'center' }}>
           구글로 로그인하면 확정된 예약을 캘린더에 바로 넣을 수 있습니다.
         </p>
-
-        <div className="alert alert-info" style={{ marginTop: '20px', fontSize: '12px' }}>
-          <strong>테스트 사용자 만들기:</strong>
-          <ol style={{ margin: '8px 0', paddingLeft: '20px' }}>
-            <li>Supabase 콘솔 → Authentication → Users</li>
-            <li>Add user로 사용자 생성 (Auto Confirm User 체크)</li>
-            <li>
-              어드민 권한은 화면에 설정하는 칸이 없습니다. SQL Editor에서
-              auth.users의 raw_app_meta_data에 {'{'}"role":"admin"{'}'}을 넣으세요.
-            </li>
-            <li>여기서 로그인</li>
-          </ol>
-        </div>
       </div>
     </div>
   );

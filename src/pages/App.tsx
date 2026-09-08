@@ -115,10 +115,7 @@ const App: React.FC = () => {
           )}
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginLeft: '20px' }}>
-            <span className={`mode-badge ${mode}`}>{mode === 'local' ? '로컬 모드' : 'Supabase 모드'}</span>
-            {mode === 'supabase' && userId && (
-              <span style={{ fontSize: '12px', color: '#666' }}>사용자: {userId.slice(0, 8)}...</span>
-            )}
+            {mode === 'local' && <span className={`mode-badge ${mode}`}>로컬 모드</span>}
             {mode === 'supabase' && userId && (
               <button
                 className="btn btn-secondary"
@@ -147,13 +144,6 @@ const App: React.FC = () => {
         <div className="alert alert-info">
           <strong>로컬 모드:</strong> 브라우저 로컬 스토리지에 데이터를 저장합니다. 진짜 인증이 아닌 수업용 데모입니다.
           역할 전환은 이 모드에만 있습니다.
-        </div>
-      )}
-
-      {mode === 'supabase' && (
-        <div className="alert alert-warning">
-          <strong>Supabase 모드:</strong> 실제 데이터베이스와 인증이 적용됩니다.
-          {!userId && '로그인이 필요합니다.'}
         </div>
       )}
 
