@@ -341,10 +341,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
 
           {/* 표가 길어서 맨 아래까지 안 내려도 되게 화면 밑에 붙여 둔다 */}
           <div style={{
-            position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 30,
-            padding: '14px 24px',
-            background: 'white', borderTop: '1px solid #ccc',
-            boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
+            position: 'fixed', bottom: '16px', zIndex: 30,
+            left: '50%', transform: 'translateX(-50%)',
+            width: 'min(1100px, calc(100vw - 48px))',
+            padding: '12px 16px',
+            background: 'white', border: '1px solid #ccc',
+            borderRadius: '10px',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
           }}>
             <div style={{
               display: 'flex', alignItems: 'center',
@@ -702,10 +705,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
           />
 
           <div style={{
-            position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 30,
-            padding: '14px 24px',
-            background: 'white', borderTop: '1px solid #ccc',
-            boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
+            position: 'fixed', bottom: '16px', zIndex: 30,
+            left: '50%', transform: 'translateX(-50%)',
+            width: 'min(1100px, calc(100vw - 48px))',
+            padding: '12px 16px',
+            background: 'white', border: '1px solid #ccc',
+            borderRadius: '10px',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
               <strong style={{ fontSize: '14px' }}>선택 {selectedSlots.length}/3</strong>
