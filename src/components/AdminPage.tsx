@@ -33,6 +33,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
     Array<{ request: Request; candidates: Candidate[]; decision: any }>
   >([]);
   const [logs, setLogs] = useState<OperationLog[]>([]);
+  const [emails, setEmails] = useState<Record<string, string>>({});
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   const [selectedSlotForConfirm, setSelectedSlotForConfirm] = useState<string | null>(null);
   const [error, setError] = useState<string>('');
@@ -125,6 +126,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
       setLogs(convertedLogs);
       setError('');
       setSuccess('');
+
+      // 신청자 이메일 목록 (어드민만 받을 수 있다)
+      supabaseApi.fetchCustomerEmails().then(setEmails);
     } catch (err) {
       setError(`데이터 조회 실패: ${String(err)}`);
     }
@@ -219,7 +223,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
                 >
                   <div>
                     <strong>#{idx + 1}</strong>{' '}
-                    <strong>{customerLabels.get(item.request.customerId) ?? '??'}</strong>
+                    <strong>
+                      {emails[item.request.customerId]
+                        ?? customerLabels.get(item.request.customerId)
+                        ?? '??'}
+                    </strong>
                     {item.request.version > 1 && (
                       <span style={{
                         marginLeft: '6px', fontSize: '12px', fontWeight: 'bold',
@@ -275,8 +283,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
           {currentRequest ? (
             <div style={{ padding: '16px', background: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
               <div className="form-group">
-                <label>고객 코드</label>
-                <input type="text" value={labelOf(currentRequest.request.customerId)} disabled />
+                <label>신청자</label>
+                <input
+                  type="text"
+                  value={
+                    emails[currentRequest.request.customerId]
+                    ?? labelOf(currentRequest.request.customerId)
+                  }
+                  disabled
+                />
               </div>
 
               <div className="form-group">

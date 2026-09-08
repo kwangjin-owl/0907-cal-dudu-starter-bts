@@ -24,13 +24,11 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
 
   try {
-    const { requestId } = await req.json();
-    if (!requestId) return json({ error: 'requestId가 없습니다' }, 400);
+    const body = await req.json();
+    const { requestId, action } = body ?? {};
 
     const url = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const resendKey = Deno.env.get('RESEND_API_KEY');
-    if (!resendKey) return json({ error: 'RESEND_API_KEY가 등록되지 않았습니다' }, 500);
 
     // 1. 호출한 사람이 어드민인지 확인한다
     const authHeader = req.headers.get('Authorization') ?? '';
@@ -45,6 +43,27 @@ Deno.serve(async (req) => {
 
     // 2. 여기서부터는 서버 권한으로 읽는다 (남의 이메일을 읽어야 하므로)
     const admin = createClient(url, serviceKey);
+
+    // 어드민 화면에서 신청자 이메일 목록만 달라고 할 때
+    if (action === 'emails') {
+      const emails: Record<string, string> = {};
+      let page = 1;
+      while (page <= 10) {
+        const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
+        if (error) return json({ error: String(error.message) }, 500);
+        for (const u of data.users) {
+          if (u.email) emails[u.id] = u.email;
+        }
+        if (data.users.length < 200) break;
+        page += 1;
+      }
+      return json({ success: true, emails });
+    }
+
+    if (!requestId) return json({ error: 'requestId가 없습니다' }, 400);
+
+    const resendKey = Deno.env.get('RESEND_API_KEY');
+    if (!resendKey) return json({ error: 'RESEND_API_KEY가 등록되지 않았습니다' }, 500);
 
     const { data: reqRow, error: reqErr } = await admin
       .from('requests')

@@ -241,6 +241,22 @@ export async function notifyConfirm(
   }
 }
 
+// 어드민 화면에서 신청자 이메일 목록을 가져온다. 어드민만 호출된다.
+export async function fetchCustomerEmails(): Promise<Record<string, string>> {
+  const client = getSupabaseClient();
+  if (!client) return {};
+
+  try {
+    const { data, error } = await client.functions.invoke('notify-confirm', {
+      body: { action: 'emails' },
+    });
+    if (error || data?.error) return {};
+    return (data?.emails ?? {}) as Record<string, string>;
+  } catch {
+    return {};
+  }
+}
+
 // ── 구글 로그인 + 캘린더 ────────────────────────────────────────
 // 로그인할 때 캘린더에 일정을 넣을 권한까지 함께 받는다.
 export async function signInWithGoogle() {
