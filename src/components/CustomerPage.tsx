@@ -326,9 +326,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
 
       {stage === 'select' && (
         <div>
-          <h3>슬롯 선택 (1~3개)</h3>
+          <h3>시간 선택 (1~3개)</h3>
           <p style={{ color: '#666', fontSize: '14px' }}>
-            원하는 슬롯을 선택하고 제출하세요. 선택 순서가 희망 우선순위입니다.
+            여러 개 고르면 그중 하나로 확정됩니다. 많이 고를수록 확정될 가능성이 큽니다.
           </p>
           <SlotTable
             slots={slots}
@@ -338,36 +338,62 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
             maxSelect={3}
           />
 
-          <div style={{ marginBottom: '20px' }}>
-            <h4>선택한 슬롯 ({selectedSlots.length}/3)</h4>
-            <ul className="list">
-              {selectedSlots.map((slotId, idx) => {
-                const slot = slots[slotId];
-                return (
-                  <li key={slotId}>
-                    <span>
-                      {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
-                    </span>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleSlotToggle(slotId)}
-                      style={{ padding: '4px 8px', fontSize: '12px' }}
-                    >
-                      제거
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+          {/* 표가 길어서 맨 아래까지 안 내려도 되게 화면 밑에 붙여 둔다 */}
+          <div style={{
+            position: 'sticky', bottom: 0, zIndex: 20,
+            marginTop: '20px', padding: '14px 16px',
+            background: 'white', border: '1px solid #ccc',
+            borderRadius: '8px', boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
+          }}>
+            <div style={{
+              display: 'flex', alignItems: 'center',
+              gap: '12px', flexWrap: 'wrap',
+            }}>
+              <strong style={{ fontSize: '14px' }}>
+                선택 {selectedSlots.length}/3
+              </strong>
+              <div style={{ flex: 1, display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {selectedSlots.length === 0 ? (
+                  <span style={{ fontSize: '14px', color: '#888' }}>
+                    위 표에서 원하는 시간을 고르세요. 고른 순서가 희망 순위입니다.
+                  </span>
+                ) : (
+                  selectedSlots.map((slotId, idx) => {
+                    const slot = slots[slotId];
+                    return (
+                      <span key={slotId} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '6px',
+                        fontSize: '13px', background: '#eef4ff',
+                        border: '1px solid #b6d4fe', borderRadius: '20px',
+                        padding: '4px 6px 4px 12px',
+                      }}>
+                        {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
+                        <button
+                          type="button"
+                          onClick={() => handleSlotToggle(slotId)}
+                          style={{
+                            border: 'none', background: '#cfe2ff', color: '#084298',
+                            borderRadius: '50%', width: '18px', height: '18px',
+                            lineHeight: '16px', cursor: 'pointer', fontSize: '13px',
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })
+                )}
+              </div>
+              <button
+                className="btn btn-primary"
+                onClick={handleSubmit}
+                disabled={selectedSlots.length === 0 || loading}
+                style={{ minWidth: '110px' }}
+              >
+                {loading ? '처리 중...' : '신청하기'}
+              </button>
+            </div>
           </div>
-
-          <button
-            className="btn btn-primary"
-            onClick={() => setStage('confirm')}
-            disabled={selectedSlots.length === 0 || loading}
-          >
-            다음: 최종 확인
-          </button>
         </div>
       )}
 
@@ -674,47 +700,65 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
             maxSelect={3}
           />
 
-          <div style={{ marginBottom: '20px' }}>
-            <h4>새로 선택한 슬롯 ({selectedSlots.length}/3)</h4>
-            <ul className="list">
-              {selectedSlots.map((slotId, idx) => {
-                const slot = slots[slotId];
-                return (
-                  <li key={slotId}>
-                    <span>
-                      {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
-                    </span>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleSlotToggle(slotId)}
-                      style={{ padding: '4px 8px', fontSize: '12px' }}
-                    >
-                      제거
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              className="btn btn-primary"
-              onClick={handleReselect}
-              disabled={selectedSlots.length === 0 || loading}
-            >
-              {loading ? '처리 중...' : '재선택 제출'}
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => {
-                setStage('view');
-                setSelectedSlots([]);
-              }}
-              disabled={loading}
-            >
-              돌아가기
-            </button>
+          <div style={{
+            position: 'sticky', bottom: 0, zIndex: 20,
+            marginTop: '20px', padding: '14px 16px',
+            background: 'white', border: '1px solid #ccc',
+            borderRadius: '8px', boxShadow: '0 -4px 14px rgba(0,0,0,0.12)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <strong style={{ fontSize: '14px' }}>선택 {selectedSlots.length}/3</strong>
+              <div style={{ flex: 1, display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {selectedSlots.length === 0 ? (
+                  <span style={{ fontSize: '14px', color: '#888' }}>
+                    위 표에서 다시 고르세요. 고른 순서가 희망 순위입니다.
+                  </span>
+                ) : (
+                  selectedSlots.map((slotId, idx) => {
+                    const slot = slots[slotId];
+                    return (
+                      <span key={slotId} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '6px',
+                        fontSize: '13px', background: '#eef4ff',
+                        border: '1px solid #b6d4fe', borderRadius: '20px',
+                        padding: '4px 6px 4px 12px',
+                      }}>
+                        {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
+                        <button
+                          type="button"
+                          onClick={() => handleSlotToggle(slotId)}
+                          style={{
+                            border: 'none', background: '#cfe2ff', color: '#084298',
+                            borderRadius: '50%', width: '18px', height: '18px',
+                            lineHeight: '16px', cursor: 'pointer', fontSize: '13px',
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })
+                )}
+              </div>
+              <button
+                className="btn btn-primary"
+                onClick={handleReselect}
+                disabled={selectedSlots.length === 0 || loading}
+                style={{ minWidth: '110px' }}
+              >
+                {loading ? '처리 중...' : '다시 신청하기'}
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setStage('view');
+                  setSelectedSlots([]);
+                }}
+                disabled={loading}
+              >
+                돌아가기
+              </button>
+            </div>
           </div>
         </div>
       )}
