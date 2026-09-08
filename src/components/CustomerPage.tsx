@@ -466,19 +466,25 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                 </p>
               )}
 
-              <div className="form-group">
-                <label>상태</label>
-                <div style={{ padding: '8px', background: '#f0f0f0', borderRadius: '4px' }}>
-                  {item.request.status === 'confirmed' && (
-                    <span className="slot-status confirmed">확정됨</span>
-                  )}
-                  {item.request.status === 'received' && (
-                    <span className="slot-status available">접수됨</span>
-                  )}
-                  {item.request.status === 'needs_reselection' && (
-                    <span className="alert alert-warning">재선택 필요</span>
-                  )}
-                </div>
+              {/* 네이버 예약 참고 - 지금 어느 단계인지 이름을 붙여 띠로 보여준다 */}
+              <div style={{
+                padding: '12px 16px',
+                borderRadius: '4px',
+                marginBottom: '16px',
+                fontWeight: 'bold',
+                fontSize: '15px',
+                background:
+                  item.request.status === 'confirmed' ? '#d4edda'
+                  : item.request.status === 'needs_reselection' ? '#fff3cd'
+                  : '#cfe2ff',
+                color:
+                  item.request.status === 'confirmed' ? '#155724'
+                  : item.request.status === 'needs_reselection' ? '#856404'
+                  : '#084298',
+              }}>
+                {item.request.status === 'confirmed' && '\u2713 예약 확정됨'}
+                {item.request.status === 'received' && '\uD83D\uDD50 예약 확인중'}
+                {item.request.status === 'needs_reselection' && '\u26A0 다시 선택해 주세요'}
               </div>
 
               <div className="form-group">
