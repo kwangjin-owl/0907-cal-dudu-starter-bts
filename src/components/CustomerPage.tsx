@@ -459,8 +459,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                       </>
                     )}
                     <span style={{
-                      flex: 1, height: '6px', background: '#d7e6fa',
-                      borderRadius: '3px', overflow: 'hidden',
+                      flex: 1, height: '10px', background: 'white',
+                      border: '1px solid #9ec5fe',
+                      borderRadius: '5px', overflow: 'hidden',
                     }}>
                       <span style={{
                         display: 'block', height: '100%',

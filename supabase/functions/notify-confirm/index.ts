@@ -77,6 +77,7 @@ Deno.serve(async (req) => {
     if (userErr || !to) return json({ error: '고객 이메일을 찾을 수 없습니다' }, 404);
 
     // 5. 메일 보내기
+    const appUrl = Deno.env.get('APP_URL') ?? 'https://cal.dudu-works.com';
     const html = `
       <div style="font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif;
                   max-width:560px;margin:0 auto;padding:24px;color:#14263B;line-height:1.6">
@@ -88,9 +89,17 @@ Deno.serve(async (req) => {
           <p style="margin:0 0 4px;font-size:13px;color:#4A5C70">확정된 시간</p>
           <p style="margin:0;font-size:20px;font-weight:700">${when}</p>
         </div>
-        <p style="margin:0 0 8px">신청하신 시간 중 위 시간으로 확정되었습니다.</p>
+        <p style="margin:0 0 18px">신청하신 시간 중 위 시간으로 확정되었습니다.</p>
+        <p style="margin:0 0 18px">
+          <a href="${appUrl}"
+             style="display:inline-block;background:#0b5ed7;color:#ffffff;
+                    text-decoration:none;font-size:16px;font-weight:700;
+                    padding:13px 26px;border-radius:6px">
+            내 예약 확인하기
+          </a>
+        </p>
         <p style="margin:0;font-size:13px;color:#4A5C70">
-          자세한 내용은 앱의 <b>내 신청 현황</b>에서 확인하실 수 있습니다.
+          버튼이 눌리지 않으면 이 주소를 복사해 열어 주세요 · ${appUrl}
         </p>
       </div>
     `;
