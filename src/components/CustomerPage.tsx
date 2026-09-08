@@ -418,79 +418,69 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
         <div>
           <h3>내 신청 현황</h3>
 
-          {isWaiting && (
-            <div className="alert alert-info" style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '17px', fontWeight: 'bold', marginBottom: '10px' }}>
-                확정을 기다리는 중입니다.
-              </div>
-              <ul style={{ margin: '0', paddingLeft: '18px', lineHeight: '1.9' }}>
-                <li>확정 안내는 <strong>접수 순서대로, 하루 안에</strong> 드립니다.</li>
-                <li>확정되면 <strong>가입하신 이메일로 확인 메일</strong>이 갑니다.</li>
-                <li>이 화면은 그대로 두셔도 자동으로 바뀝니다.</li>
-              </ul>
-              <div style={{
-                fontSize: '13px', marginTop: '10px', display: 'flex',
-                alignItems: 'center', gap: '10px', height: '30px',
-              }}>
-                {checking ? (
-                  <strong style={{ color: '#0b5ed7' }}>지금 확인하는 중…</strong>
-                ) : (
-                  <>
-                    <span style={{ color: '#666' }}>다음 확인까지</span>
-                    <strong style={{
-                      fontSize: '17px', color: '#0b5ed7',
-                      minWidth: '46px', textAlign: 'center',
-                      background: 'white', border: '1px solid #b6d4fe',
-                      borderRadius: '4px', padding: '1px 6px',
-                    }}>
-                      {countdown}초
-                    </strong>
-                  </>
-                )}
-                <span style={{
-                  flex: 1, height: '6px', background: '#d7e6fa',
-                  borderRadius: '3px', overflow: 'hidden',
-                }}>
-                  <span style={{
-                    display: 'block', height: '100%',
-                    width: `${((REFRESH_SEC - countdown) / REFRESH_SEC) * 100}%`,
-                    background: '#0b5ed7', transition: 'width 1s linear',
-                  }} />
-                </span>
-              </div>
-            </div>
-          )}
-
           {customerRequests.map((item, idx) => (
             <div key={item.request.id} style={{ marginBottom: '20px', padding: '16px', background: 'white', borderRadius: '4px', border: '1px solid #ddd' }}>
               <h4>신청 #{item.request.version} (접수일: {new Date(item.request.createdAt).toLocaleString()})</h4>
 
-              {item.request.status === 'received' && (
-                <p style={{ fontSize: '13px', color: '#666', margin: '-6px 0 12px' }}>
-                  접수한 지 <strong>{elapsedText(item.request.createdAt)}</strong> 지났습니다.
-                </p>
+              {/* 네이버 예약 참고 - 지금 어느 단계인지 이름을 붙이고, 기다리는 중이면 안내를 한자리에 모은다 */}
+              {item.request.status === 'received' ? (
+                <div style={{
+                  padding: '14px 16px', borderRadius: '4px', marginBottom: '16px',
+                  background: '#cfe2ff', color: '#084298',
+                }}>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                    {'\uD83D\uDD50'} 예약 확인중
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#0a58ca', margin: '4px 0 10px' }}>
+                    접수한 지 <strong>{elapsedText(item.request.createdAt)}</strong> 지났습니다.
+                  </div>
+                  <ul style={{ margin: '0', paddingLeft: '18px', lineHeight: '1.9', fontSize: '14px' }}>
+                    <li>확정 안내는 <strong>접수 순서대로, 하루 안에</strong> 드립니다.</li>
+                    <li>확정되면 <strong>가입하신 이메일로 확인 메일</strong>이 갑니다.</li>
+                    <li>이 화면은 그대로 두셔도 자동으로 바뀝니다.</li>
+                  </ul>
+                  <div style={{
+                    fontSize: '13px', marginTop: '10px', display: 'flex',
+                    alignItems: 'center', gap: '10px', height: '30px',
+                  }}>
+                    {checking ? (
+                      <strong style={{ color: '#0b5ed7' }}>지금 확인하는 중…</strong>
+                    ) : (
+                      <>
+                        <span style={{ color: '#0a58ca' }}>다음 확인까지</span>
+                        <strong style={{
+                          fontSize: '17px', color: '#0b5ed7',
+                          minWidth: '46px', textAlign: 'center',
+                          background: 'white', border: '1px solid #b6d4fe',
+                          borderRadius: '4px', padding: '1px 6px',
+                        }}>
+                          {countdown}초
+                        </strong>
+                      </>
+                    )}
+                    <span style={{
+                      flex: 1, height: '6px', background: '#d7e6fa',
+                      borderRadius: '3px', overflow: 'hidden',
+                    }}>
+                      <span style={{
+                        display: 'block', height: '100%',
+                        width: `${((REFRESH_SEC - countdown) / REFRESH_SEC) * 100}%`,
+                        background: '#0b5ed7', transition: 'width 1s linear',
+                      }} />
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  padding: '12px 16px', borderRadius: '4px', marginBottom: '16px',
+                  fontWeight: 'bold', fontSize: '15px',
+                  background: item.request.status === 'confirmed' ? '#d4edda' : '#fff3cd',
+                  color: item.request.status === 'confirmed' ? '#155724' : '#856404',
+                }}>
+                  {item.request.status === 'confirmed' && '\u2713 예약 확정됨'}
+                  {item.request.status === 'needs_reselection' && '\u26A0 다시 선택해 주세요'}
+                </div>
               )}
-
-              {/* 네이버 예약 참고 - 지금 어느 단계인지 이름을 붙여 띠로 보여준다 */}
-              <div style={{
-                padding: '12px 16px',
-                borderRadius: '4px',
-                marginBottom: '16px',
-                fontWeight: 'bold',
-                fontSize: '15px',
-                background:
-                  item.request.status === 'confirmed' ? '#d4edda'
-                  : item.request.status === 'needs_reselection' ? '#fff3cd'
-                  : '#cfe2ff',
-                color:
-                  item.request.status === 'confirmed' ? '#155724'
-                  : item.request.status === 'needs_reselection' ? '#856404'
-                  : '#084298',
-              }}>
-                {item.request.status === 'confirmed' && '\u2713 예약 확정됨'}
-                {item.request.status === 'received' && '\uD83D\uDD50 예약 확인중'}
-                {item.request.status === 'needs_reselection' && '\u26A0 다시 선택해 주세요'}
-              </div>
 
               <div className="form-group">
                 <label>선택한 슬롯 (우선순위 순)</label>
