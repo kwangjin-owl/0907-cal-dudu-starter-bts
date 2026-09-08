@@ -498,13 +498,19 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                   {item.candidates.map((c, cidx) => {
                     const slot = slots[c.slotId];
                     const isAvailable = slot?.status === 'available';
+                    const waiting = item.request.status === 'received';
                     return (
                       <li key={c.id}>
                         <span>
                           {cidx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
                           {' '}
-                          <span style={{ marginLeft: '10px', fontSize: '12px', color: isAvailable ? '#28a745' : '#dc3545' }}>
-                            {isAvailable ? '(가능)' : '(마감)'}
+                          <span style={{
+                            marginLeft: '10px', fontSize: '12px',
+                            color: !isAvailable ? '#dc3545' : (waiting ? '#888' : '#28a745'),
+                          }}>
+                            {isAvailable
+                              ? (waiting ? '(아직 마감 안 됨)' : '(가능)')
+                              : '(마감)'}
                           </span>
                         </span>
                       </li>
@@ -528,10 +534,18 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                   );
                 }
                 return (
-                  <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px' }}>
-                    신청하신 {totalCount}개 중 {openCount}개가 아직 마감되지 않았습니다.
-                    {' '}신청만으로는 시간이 잡히지 않고, 관리자가 확정해야 내 시간이 됩니다.
-                  </p>
+                  <div style={{
+                    margin: '0 0 12px', padding: '12px 14px',
+                    background: '#f6f6f6', borderLeft: '4px solid #999',
+                    borderRadius: '4px',
+                  }}>
+                    <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#333' }}>
+                      신청하신 {totalCount}개 중 {openCount}개가 아직 마감되지 않았습니다.
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#555', marginTop: '6px' }}>
+                      신청만으로는 시간이 잡히지 않습니다. 관리자가 확정해야 내 시간이 됩니다.
+                    </div>
+                  </div>
                 );
               })()}
 
