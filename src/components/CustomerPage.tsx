@@ -331,13 +331,25 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
           <p style={{ color: '#666', fontSize: '14px' }}>
             원하는 슬롯을 선택하고 제출하세요. 선택 순서가 희망 우선순위입니다.
           </p>
-          <SlotTable
-            slots={slots}
-            selectedSlots={selectedSlots}
-            onToggle={handleSlotToggle}
-            mode="select"
-            maxSelect={3}
-          />
+          {/* 14일치라 세로로 길어서 스크롤 영역 안에 넣는다 */}
+          <div style={{
+            maxHeight: '460px', overflowY: 'auto',
+            border: '1px solid #ddd', borderRadius: '4px',
+          }}>
+            {/* 14일 x 3시간대라 표가 길다. 표 안에서만 스크롤되게 묶는다. */}
+            <div style={{
+              maxHeight: '420px', overflowY: 'auto',
+              border: '1px solid #ddd', borderRadius: '6px',
+            }}>
+              <SlotTable
+                slots={slots}
+                selectedSlots={selectedSlots}
+                onToggle={handleSlotToggle}
+                mode="select"
+                maxSelect={3}
+              />
+            </div>
+          </div>
 
           {/* 표가 길어서 맨 아래까지 안 내려도 되게 화면 밑에 붙여 둔다 */}
           <div style={{
@@ -696,13 +708,25 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
               <li>다시 신청하면 <strong>새 접수로 처음부터 기다리게</strong> 됩니다.</li>
             </ul>
           </div>
-          <SlotTable
-            slots={slots}
-            selectedSlots={selectedSlots}
-            onToggle={handleSlotToggle}
-            mode="select"
-            maxSelect={3}
-          />
+          {/* 14일치라 세로로 길어서 스크롤 영역 안에 넣는다 */}
+          <div style={{
+            maxHeight: '460px', overflowY: 'auto',
+            border: '1px solid #ddd', borderRadius: '4px',
+          }}>
+            {/* 14일 x 3시간대라 표가 길다. 표 안에서만 스크롤되게 묶는다. */}
+            <div style={{
+              maxHeight: '420px', overflowY: 'auto',
+              border: '1px solid #ddd', borderRadius: '6px',
+            }}>
+              <SlotTable
+                slots={slots}
+                selectedSlots={selectedSlots}
+                onToggle={handleSlotToggle}
+                mode="select"
+                maxSelect={3}
+              />
+            </div>
+          </div>
 
           <div style={{
             position: 'fixed', bottom: '16px', zIndex: 30,
