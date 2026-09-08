@@ -218,8 +218,29 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
                   }}
                 >
                   <div>
-                    <strong>#{idx + 1}</strong> {labelOf(item.request.customerId)} (v
-                    {item.request.version})
+                    <strong>#{idx + 1}</strong>{' '}
+                    <strong>{customerLabels.get(item.request.customerId) ?? '??'}</strong>
+                    {item.request.version > 1 && (
+                      <span style={{
+                        marginLeft: '6px', fontSize: '12px', fontWeight: 'bold',
+                        color: '#856404', background: '#fff3cd',
+                        border: '1px solid #ffe08a', borderRadius: '3px', padding: '1px 6px',
+                      }}>
+                        재신청 {item.request.version}번째
+                      </span>
+                    )}
+                    <span style={{ marginLeft: '6px', fontSize: '11px', color: '#aaa' }}>
+                      {item.request.customerId.slice(0, 8)}
+                    </span>
+                    <br />
+                    <span style={{ fontSize: '13px', color: '#333' }}>
+                      희망 {item.candidates
+                        .map(c => {
+                          const sl = slots[c.slotId];
+                          return `${sl?.date?.slice(5)} ${TIME_SLOTS.find(t => t.label === sl?.timeLabel)?.displayLabel ?? ''}`;
+                        })
+                        .join(' · ')}
+                    </span>
                     <br />
                     <span style={{ fontSize: '12px', color: '#666' }}>
                       {new Date(item.request.createdAt).toLocaleString()}
