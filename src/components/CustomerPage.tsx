@@ -467,17 +467,17 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
                   <ul style={{ margin: '0', paddingLeft: '18px', lineHeight: '1.9', fontSize: '14px' }}>
                     <li>확정 안내는 <strong>접수 순서대로, 하루 안에</strong> 드립니다.</li>
                     <li>확정되면 <strong>가입하신 이메일로 확인 메일</strong>이 갑니다.</li>
-                    <li>이 화면은 그대로 두셔도 자동으로 바뀝니다.</li>
+                    <li>관리자가 확정하면 이 화면이 저절로 바뀝니다. 새로고침하지 않으셔도 됩니다.</li>
                   </ul>
                   <div style={{
                     fontSize: '13px', marginTop: '10px', display: 'flex',
                     alignItems: 'center', gap: '10px', height: '30px',
                   }}>
                     {checking ? (
-                      <strong style={{ color: '#0b5ed7' }}>지금 확인하는 중…</strong>
+                      <strong style={{ color: '#0b5ed7' }}>확정됐는지 보는 중…</strong>
                     ) : (
                       <>
-                        <span style={{ color: '#0a58ca' }}>다음 확인까지</span>
+                        <span style={{ color: '#0a58ca' }}>확정됐는지 다시 볼 때까지</span>
                         <strong style={{
                           fontSize: '17px', color: '#0b5ed7',
                           minWidth: '46px', textAlign: 'center',
