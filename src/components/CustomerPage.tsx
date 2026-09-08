@@ -420,10 +420,14 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
 
           {isWaiting && (
             <div className="alert alert-info" style={{ marginBottom: '16px' }}>
-              <strong>확정을 기다리는 중입니다.</strong>{' '}
-              관리자가 신청하신 시간 중 하나를 확정하면 이 화면이 자동으로 바뀝니다.
-              확정 안내는 접수 순서대로, 하루 안에 드립니다.
-              {' '}확정되면 가입하신 이메일로 확인 메일도 함께 보내드립니다.
+              <div style={{ fontSize: '17px', fontWeight: 'bold', marginBottom: '10px' }}>
+                확정을 기다리는 중입니다.
+              </div>
+              <ul style={{ margin: '0', paddingLeft: '18px', lineHeight: '1.9' }}>
+                <li>확정 안내는 <strong>접수 순서대로, 하루 안에</strong> 드립니다.</li>
+                <li>확정되면 <strong>가입하신 이메일로 확인 메일</strong>이 갑니다.</li>
+                <li>이 화면은 그대로 두셔도 자동으로 바뀝니다.</li>
+              </ul>
               <div style={{
                 fontSize: '13px', marginTop: '10px', display: 'flex',
                 alignItems: 'center', gap: '10px', height: '30px',
