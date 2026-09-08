@@ -603,14 +603,17 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                 ).length;
                 const totalCount = item.candidates.length;
                 if (openCount === 0) return null;
-                if (openCount === 1) {
+
+                // 밀려서 하나만 남은 경우에만 경고. 처음부터 하나만 고른 사람은 아직 밀린 게 아니다.
+                if (openCount === 1 && totalCount > 1) {
                   return (
                     <div className="alert alert-warning">
                       <strong>신청하신 {totalCount}개 중 1개만 남았습니다.</strong>{' '}
-                      이 시간마저 다른 분에게 확정되면 처음부터 다시 골라야 합니다.
+                      이 시간도 마감되면 이 화면에서 바로 다시 고르실 수 있습니다.
                     </div>
                   );
                 }
+
                 return (
                   <div style={{
                     margin: '0 0 12px', padding: '12px 14px',
@@ -618,10 +621,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                     borderRadius: '4px',
                   }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#333' }}>
-                      신청하신 {totalCount}개 중 {openCount}개가 아직 마감되지 않았습니다.
+                      {totalCount === 1
+                        ? '시간을 1개만 신청하셨습니다.'
+                        : `신청하신 ${totalCount}개 중 ${openCount}개가 아직 마감되지 않았습니다.`}
                     </div>
                     <div style={{ fontSize: '14px', color: '#555', marginTop: '6px' }}>
                       신청만으로는 시간이 잡히지 않습니다. 관리자가 확정해야 내 시간이 됩니다.
+                      {totalCount === 1 && ' 마감되면 이 화면에서 바로 다시 고르실 수 있습니다.'}
                     </div>
                   </div>
                 );
