@@ -517,18 +517,20 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
                 const openCount = item.candidates.filter(
                   c => slots[c.slotId]?.status === 'available'
                 ).length;
+                const totalCount = item.candidates.length;
                 if (openCount === 0) return null;
                 if (openCount === 1) {
                   return (
                     <div className="alert alert-warning">
-                      <strong>남은 시간이 1개입니다.</strong>{' '}
+                      <strong>신청하신 {totalCount}개 중 1개만 남았습니다.</strong>{' '}
                       이 시간마저 다른 분에게 확정되면 처음부터 다시 골라야 합니다.
                     </div>
                   );
                 }
                 return (
                   <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px' }}>
-                    아직 선택할 수 있는 시간이 {openCount}개 남아 있습니다.
+                    신청하신 {totalCount}개 중 {openCount}개가 아직 마감되지 않았습니다.
+                    {' '}신청만으로는 시간이 잡히지 않고, 관리자가 확정해야 내 시간이 됩니다.
                   </p>
                 );
               })()}
