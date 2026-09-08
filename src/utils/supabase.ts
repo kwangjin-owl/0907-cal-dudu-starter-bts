@@ -34,16 +34,6 @@ export async function signUpCustomer(email: string, password: string) {
   return data;
 }
 
-// 이메일로 새 계정을 만든다. Supabase에서 이메일 확인이 꺼져 있어야 바로 로그인된다.
-export async function signUpCustomer(email: string, password: string) {
-  const client = getSupabaseClient();
-  if (!client) throw new Error('Supabase not configured');
-
-  const { data, error } = await client.auth.signUp({ email, password });
-  if (error) throw error;
-  return data;
-}
-
 export async function signInCustomer(email: string, password: string) {
   const client = getSupabaseClient();
   if (!client) throw new Error('Supabase not configured');
