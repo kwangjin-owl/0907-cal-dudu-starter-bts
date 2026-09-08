@@ -389,7 +389,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
 
       {/* 슬롯 현황 */}
       <div style={{ marginTop: '40px' }}>
-        <h3>슬롯 현황 (표시용)</h3>
+        <h3>슬롯 현황</h3>
         <SlotTable slots={slots} selectedSlots={[]} onToggle={() => {}} mode="view" />
       </div>
 
@@ -402,10 +402,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
               <tr>
                 <th>시간</th>
                 <th>행위</th>
-                <th>요청ID</th>
                 <th>슬롯</th>
                 <th>결과</th>
-                <th>오류</th>
               </tr>
             </thead>
             <tbody>
@@ -416,17 +414,22 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode, userId }) => {
                 .map(log => (
                   <tr key={log.id} style={{ fontSize: '12px' }}>
                     <td>{new Date(log.timestamp).toLocaleString()}</td>
-                    <td>{log.action}</td>
-                    <td style={{ fontSize: '10px', fontFamily: 'monospace' }}>
-                      {log.requestId.substring(0, 8)}...
+                    <td>
+                      {log.action === 'submit' ? '신청'
+                        : log.action === 'confirm' ? '확정'
+                        : log.action === 'reselect' ? '재신청'
+                        : log.action}
                     </td>
                     <td>{log.slotId ? log.slotId : '-'}</td>
                     <td>
-                      <span style={{ color: log.status === 'success' ? '#28a745' : '#dc3545' }}>
-                        {log.status === 'success' ? '성공' : '실패'}
-                      </span>
+                      {log.status === 'success' ? (
+                        <span style={{ color: '#28a745' }}>성공</span>
+                      ) : (
+                        <span style={{ color: '#dc3545' }}>
+                          실패{log.error ? ` · ${log.error.substring(0, 30)}` : ''}
+                        </span>
+                      )}
                     </td>
-                    <td style={{ color: '#dc3545' }}>{log.error ? log.error.substring(0, 30) : '-'}</td>
                   </tr>
                 ))}
             </tbody>

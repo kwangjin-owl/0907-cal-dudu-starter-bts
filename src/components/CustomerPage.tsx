@@ -351,9 +351,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, us
           }}>
             <div style={{
               display: 'flex', alignItems: 'center',
-              gap: '12px', flexWrap: 'wrap',
+              gap: '14px', flexWrap: 'wrap',
             }}>
-              <strong style={{ fontSize: '14px' }}>
+              <strong style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>
                 선택 {selectedSlots.length}/3
               </strong>
               <div style={{ flex: 1, display: 'flex', gap: '8px', flexWrap: 'wrap' }}>

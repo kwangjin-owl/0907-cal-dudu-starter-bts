@@ -172,9 +172,9 @@ const App: React.FC = () => {
         Service Blueprint (As-Is → To-Be)
       </a>
 
-      <hr style={{ margin: '40px 0', borderColor: '#ddd' }} />
-      <div style={{ fontSize: '12px', color: '#666', textAlign: 'center', paddingBottom: '20px' }}>
-        <p>cal.dudu-works.com</p>
+      <hr style={{ margin: '24px 0 12px', borderColor: '#e5e5e5' }} />
+      <div style={{ fontSize: '12px', color: '#999', textAlign: 'center', paddingBottom: '16px' }}>
+        cal.dudu-works.com
       </div>
     </div>
   );
