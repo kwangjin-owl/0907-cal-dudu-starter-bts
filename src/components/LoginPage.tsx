@@ -9,11 +9,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setNotice('');
     setLoading(true);
 
     try {
@@ -23,10 +26,30 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         return;
       }
 
+      if (mode === 'signup') {
+        if (password.length < 6) {
+          setError('비밀번호는 6자 이상으로 정해 주세요');
+          setLoading(false);
+          return;
+        }
+        await supabaseApi.signUpCustomer(email, password);
+        // 가입 직후 바로 로그인시킨다
+        await supabaseApi.signInCustomer(email, password);
+        onLoginSuccess();
+        return;
+      }
+
       await supabaseApi.signInCustomer(email, password);
       onLoginSuccess();
     } catch (err) {
-      setError(`로그인 실패: ${String(err)}`);
+      const msg = String(err);
+      if (mode === 'signup' && msg.includes('already registered')) {
+        setError('이미 가입된 이메일입니다. 로그인해 주세요.');
+      } else if (mode === 'login' && msg.includes('Invalid login credentials')) {
+        setError('이메일 또는 비밀번호가 맞지 않습니다. 처음이시면 가입하기를 눌러 주세요.');
+      } else {
+        setError(`${mode === 'signup' ? '가입' : '로그인'} 실패: ${msg}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -49,11 +72,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     <div className="container">
       <div className="login-container">
         <h1>cal.dudu-works.com</h1>
-        <h2>로그인</h2>
+        <h2>{mode === 'login' ? '로그인' : '가입하기'}</h2>
 
         {error && <div className="alert alert-error">{error}</div>}
+        {notice && <div className="alert alert-info">{notice}</div>}
 
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label htmlFor="email">이메일</label>
             <input
@@ -73,7 +97,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="비밀번호"
+              placeholder={mode === 'signup' ? '6자 이상' : '비밀번호'}
               disabled={loading}
             />
           </div>
@@ -84,9 +108,31 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             style={{ width: '100%', marginTop: '10px' }}
             disabled={loading}
           >
-            {loading ? '로그인 중...' : '로그인'}
+            {loading
+              ? (mode === 'signup' ? '가입 중...' : '로그인 중...')
+              : (mode === 'signup' ? '가입하고 시작하기' : '로그인')}
           </button>
         </form>
+
+        <p style={{ fontSize: '13px', color: '#555', margin: '12px 0 0', textAlign: 'center' }}>
+          {mode === 'login' ? '처음이신가요?' : '이미 계정이 있으신가요?'}{' '}
+          <button
+            type="button"
+            onClick={() => {
+              setMode(mode === 'login' ? 'signup' : 'login');
+              setError('');
+              setNotice('');
+            }}
+            disabled={loading}
+            style={{
+              border: 'none', background: 'none', padding: 0,
+              color: '#0b5ed7', fontWeight: 'bold', fontSize: '13px',
+              cursor: 'pointer', textDecoration: 'underline',
+            }}
+          >
+            {mode === 'login' ? '가입하기' : '로그인하기'}
+          </button>
+        </p>
 
         <div
           style={{
